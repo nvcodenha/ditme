@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lời Nhắn Nhỏ Lơ Lửng & Né Khung Vĩnh Viễn</title>
+    <title>Lời Nhắn Lơ Lửng & Rơi Hồng Nhạt</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -16,23 +16,53 @@
             height: 100vh;
         }
         
-        /* Chỉnh chữ NHỎ LẠI và hiện ngay lập tức */
+        /* Chỉnh chữ NHỎ LẠI và màu HỒNG NHẠT */
         .message {
             position: absolute;
-            font-size: 0.9em; /* CHỮ NHỎ HƠN */
+            font-size: 0.9em; 
             font-weight: bold;
             white-space: nowrap;
             opacity: 1; 
             z-index: 10; 
             color: #FFC0CB; /* Màu hồng nhạt */
             
-            /* Animation LẮC LƯ NHANH VÀ VĨNH VIỄN */
+            /* Dùng chung cho chữ rơi (opacity sẽ được chỉnh lại trong Keyframes) */
+        }
+        
+        /* Chữ RƠI (Chậm lại, 10s) */
+        .message.fall {
+             opacity: 0; /* Khởi đầu ẩn cho chữ rơi */
+             animation: 
+                fallAndFade 10s forwards, 
+                blinkSevenColors 0.15s infinite step-end; 
+            -webkit-animation: 
+                fallAndFade 10s forwards, 
+                blinkSevenColors 0.15s infinite step-end;
+        }
+
+        /* Chữ LƠ LỬNG (Vĩnh viễn) */
+        .message.floating {
+            opacity: 1; /* Hiện ngay lập tức */
             animation: 
                 hoverBubble 4s infinite alternate ease-in-out, 
                 blinkSevenColors 0.15s infinite step-end; 
             -webkit-animation: 
                 hoverBubble 4s infinite alternate ease-in-out, 
                 blinkSevenColors 0.15s infinite step-end;
+        }
+
+        /* Keyframes RƠI XUỐNG ĐÍT VÀ BIẾN MẤT TẠI CHỖ */
+        @keyframes fallAndFade {
+            0% { opacity: 0; transform: translateY(-50px) scale(1); }
+            5% { opacity: 0.9; }
+            99% { opacity: 0.9; transform: translateY(100vh) scale(1); } 
+            100% { opacity: 0; transform: translateY(100vh) scale(0); } /* Biến mất NGAY TẠI ĐÂY */
+        }
+        @-webkit-keyframes fallAndFade {
+            0% { opacity: 0; -webkit-transform: translateY(-50px) scale(1); }
+            5% { opacity: 0.9; }
+            99% { opacity: 0.9; -webkit-transform: translateY(100vh) scale(1); }
+            100% { opacity: 0; -webkit-transform: translateY(100vh) scale(0); }
         }
         
         /* Keyframes BONG BÓNG LẮC LƯ NHANH */
@@ -69,11 +99,24 @@
         .message.icon {
             text-shadow: 0 0 10px rgba(255, 255, 0, 0.8), 0 0 20px rgba(255, 165, 0, 0.5); 
             color: inherit; 
+        }
+        /* Icon Lơ Lửng */
+        .message.icon.floating {
             animation: 
                 hoverBubble 4s infinite alternate ease-in-out, 
                 pulseIcon 1s infinite alternate; 
             -webkit-animation: 
                 hoverBubble 4s infinite alternate ease-in-out, 
+                pulseIcon 1s infinite alternate;
+        }
+        /* Icon Rơi */
+        .message.icon.fall {
+            opacity: 0;
+            animation: 
+                fallAndFade 10s forwards, 
+                pulseIcon 1s infinite alternate;
+            -webkit-animation: 
+                fallAndFade 10s forwards, 
                 pulseIcon 1s infinite alternate;
         }
 
@@ -87,7 +130,7 @@
         }
 
         #main-sticker {
-            width: 250px; /* KHUNG VẪN THON */
+            width: 250px; 
             height: auto; border-radius: 15px; 
             box-shadow: 0 0 20px rgba(255, 0, 85, 0.7); 
             animation: pulseSticker 2s infinite alternate; 
@@ -112,12 +155,11 @@
             "🖕🏻", 
             "🖕🏻🖕🏻", 
             "🖕🏻🖕🏻🖕🏻",
-        ]; // ĐÃ BỎ "Ngáo lồn nx"
+        ];
 
-        // KHUNG THON LẠI
         const STICKER_WIDTH = 250; 
         const STICKER_HEIGHT = 350; 
-        const MESSAGE_COUNT = 10; // GIẢM CHỮ XUỐNG 10 CÁI
+        const MESSAGE_FLOATING_COUNT = 10; // 10 chữ lơ lửng xếp sẵn
 
         function getRandomPosition(element, viewportWidth, viewportHeight) {
             const elementWidth = element.offsetWidth;
@@ -127,7 +169,6 @@
             const centerY = viewportHeight / 2;
             
             // Khu vực cấm (quanh sticker)
-            // Giảm đệm từ 50px xuống 20px để chữ nhỏ có thể lơ lửng gần hơn
             const banRadiusX = STICKER_WIDTH / 2 + 20; 
             const banRadiusY = STICKER_HEIGHT / 2 + 20;
             
@@ -135,15 +176,12 @@
             let tries = 0;
             
             do {
-                // Vị trí ngẫu nhiên
                 x = Math.random() * (viewportWidth - elementWidth);
                 y = Math.random() * (viewportHeight - elementHeight);
                 
-                // Kiểm tra xem vị trí có nằm trong khu vực cấm không
                 const distanceX = Math.abs(x + elementWidth / 2 - centerX);
                 const distanceY = Math.abs(y + elementHeight / 2 - centerY);
                 
-                // Nếu vượt quá giới hạn (NÉ KHUNG)
                 if (distanceX > banRadiusX || distanceY > banRadiusY || tries > 100) {
                     break; 
                 }
@@ -154,7 +192,7 @@
             return { x, y };
         }
         
-        function createMessage() {
+        function createMessage(isFloating = true) {
             const text = messages[Math.floor(Math.random() * messages.length)];
             const messageElement = document.createElement('div');
             messageElement.classList.add('message');
@@ -166,30 +204,55 @@
             
             document.body.appendChild(messageElement);
             
-            return messageElement;
-        }
-
-        function initializeMessages() {
-            const viewportWidth = window.innerWidth;
-            const viewportHeight = window.innerHeight;
-            
-            // TẠO CHỮ SẴN NGAY LẬP TỨC
-            for (let i = 0; i < MESSAGE_COUNT; i++) {
-                const messageElement = createMessage();
-                
-                // Đảm bảo kích thước chữ đã được render trước khi tính toán vị trí
-                const pos = getRandomPosition(messageElement, viewportWidth, viewportHeight);
-                
+            if (isFloating) {
+                messageElement.classList.add('floating');
+                // Vị trí cho chữ lơ lửng (NÉ KHUNG)
+                const pos = getRandomPosition(messageElement, window.innerWidth, window.innerHeight);
                 messageElement.style.left = pos.x + 'px';
                 messageElement.style.top = pos.y + 'px'; 
                 
-                // Random delay cho chuyển động bong bóng để chúng không đồng bộ
+                // Random delay cho chuyển động bong bóng
                 messageElement.style.animationDelay = (Math.random() * 4) + 's';
+                
+            } else {
+                messageElement.classList.add('fall');
+                // Vị trí cho chữ rơi (Trên cùng)
+                const startX = Math.random() * (window.innerWidth - 150); 
+                messageElement.style.left = startX + 'px';
+                messageElement.style.top = '-50px'; 
+                
+                // Delay cho animation rơi
+                const delay = Math.random() * 0.5; 
+                messageElement.style.animationDelay = delay + 's';
+
+                // Chữ rơi biến mất sau 10s + delay
+                setTimeout(() => {
+                    messageElement.remove();
+                }, 10000 + (delay * 1000)); 
             }
+            
+            return messageElement;
         }
 
-        window.onload = initializeMessages;
-        // Bỏ setInterval để chỉ xếp sẵn chữ khi load web
+        // 1. TẠO CHỮ LƠ LỬNG SẴN NGAY LẬP TỨC
+        function initializeFloatingMessages() {
+            for (let i = 0; i < MESSAGE_FLOATING_COUNT; i++) {
+                createMessage(true); // Tạo chữ Lơ Lửng
+            }
+        }
+        
+        // 2. TẠO CHỮ RƠI ĐỀU ĐẶN SAU KHI WEB LOAD
+        function startFallingMessages() {
+            // TẠO CHỮ RƠI MỖI 250ms (Tần suất vừa phải để không bị dính cục)
+            setInterval(() => createMessage(false), 250);
+        }
+
+
+        window.onload = () => {
+             initializeFloatingMessages();
+             // Thêm một độ trễ nhỏ để chữ lơ lửng ổn định trước khi chữ rơi bắt đầu
+             setTimeout(startFallingMessages, 1000); 
+        };
 
     </script>
 </body>
