@@ -24,93 +24,13 @@
             touch-action: none; 
         }
         
-        /* POPUP CẢNH BÁO (NHỎ GỌN, NGẮN GỌN NHƯ KHUNG CHÍNH) */
-        .popup-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.95); 
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999; 
-            text-align: center;
-            pointer-events: auto; /* Cho phép tương tác với popup */
-        }
+        /* POPUP CẢNH BÁO (ĐÃ XÓA PHẦN HIỂN THỊ POPUP) */
+        /* Giữ lại style này phòng khi sau này mày muốn thêm lại, thằng chó! */
+        .popup-overlay { display: none !important; }
+        .popup-content { display: none !important; }
 
-        /* KHUNG POPUP MỚI */
-        .popup-content {
-            background-color: rgba(0, 0, 0, 0.9); 
-            border-radius: 10px;
-            padding: 10px; /* Giảm padding */
-            width: 90%; 
-            max-width: 220px; /* Nhỏ gọn hơn */
-            box-shadow: 0 0 15px #ff00ea; /* Phát sáng tương tự khung chính */
-            position: relative; /* Để tuyết rơi cục bộ bên trong */
-            pointer-events: auto;
-            animation: pulsePinkPopup 1.2s infinite alternate; /* Hiệu ứng nhấp nháy cho popup */
-        }
-
-        /* Keyframes cho hiệu ứng nhấp nháy popup màu hồng */
-        @keyframes pulsePinkPopup {
-            from { box-shadow: 0 0 10px #ff00ea; }
-            to { box-shadow: 0 0 25px #ff00ea; }
-        }
-
-        .popup-content h3 {
-            color: #00ff41;
-            font-size: 1em; /* Nhỏ gọn hơn */
-            margin-top: 5px;
-            margin-bottom: 5px;
-            font-weight: 900; 
-            text-shadow: 0 0 5px #00ff41;
-        }
-
-        .popup-content p {
-            color: #ffffff; 
-            font-size: 0.75em; /* Nhỏ gọn hơn */
-            font-weight: 700; 
-            line-height: 1.3;
-            text-shadow: 0 0 3px rgba(255, 255, 255, 0.5); 
-            margin-bottom: 10px;
-        }
-        .popup-content strong {
-            color: #ff00ea;
-            font-weight: 900; 
-            text-shadow: 0 0 5px #ff00ea;
-        }
-
-        #close-popup {
-            background-color: #CC0000; 
-            color: #ffffff;
-            border: none;
-            padding: 7px 12px; /* Nhỏ gọn hơn */
-            margin-top: 10px;
-            font-size: 0.9em; /* Nhỏ gọn hơn */
-            font-weight: 900;
-            border-radius: 5px;
-            cursor: pointer;
-            box-shadow: 0 0 8px #CC0000;
-            transition: background-color 0.2s;
-        }
-        #close-popup:hover {
-            background-color: #ff0000;
-        }
-        
-        /* TUYẾT RƠI CỤC BỘ TRONG POPUP */
-        #popup-snow-container {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            pointer-events: none;
-            z-index: 1; /* Để tuyết nằm dưới nội dung popup */
-            border-radius: 10px; /* Giới hạn tuyết trong bo viền popup */
-        }
+        /* TUYẾT RƠI CỤC BỘ TRONG POPUP (ĐÃ ẨN) */
+        #popup-snow-container { display: none !important; }
 
 
         /* KHUNG CHỨA TOÀN BỘ NỘI DUNG CHÍNH (ĐỂ CỐ ĐỊNH Ở GIỮA) */
@@ -129,13 +49,13 @@
             pointer-events: none; 
         }
         
-        /* Chữ nền chung - XANH LÁ */
+        /* Chữ nền chung - ĐÃ ĐỔI SANG MÀU HỒNG */
         .hacker-text-effect {
             position: absolute; 
-            color: rgba(0, 255, 65, 0.3); 
+            color: rgba(255, 0, 255, 0.3); /* Đã đổi thành màu hồng */
             pointer-events: none; 
             opacity: 0; 
-            text-shadow: 0 0 8px #00ff41; 
+            text-shadow: 0 0 8px #ff00ff; /* Đã đổi thành màu hồng */
             user-select: none; 
             white-space: nowrap; 
             z-index: 1; 
@@ -214,8 +134,29 @@
             z-index: 10; 
             position: relative; 
             pointer-events: auto; 
+            display: flex; /* Sử dụng flexbox để căn giữa nội dung */
+            flex-direction: column; /* Sắp xếp theo cột */
+            align-items: center; /* Căn giữa theo chiều ngang */
+            justify-content: flex-start; /* Giữ avatar ở trên cùng, sau đó là khung phụ */
         }
         
+        /* KHUNG PHỤ BÊN TRONG KHUNG CHÍNH */
+        .inner-frame-container {
+            border: 2px solid #ff00ff; /* Viền hồng */
+            padding: 6px;
+            margin-top: 10px; /* Khoảng cách với avatar */
+            background-color: rgba(255, 0, 255, 0.1); /* Nền hồng nhạt */
+            border-radius: 5px;
+            box-shadow: 0 0 5px #ff00ff; /* Bóng hồng */
+            width: calc(100% - 20px); /* To ngang khung chính, trừ padding */
+            max-width: 220px; /* Giới hạn để không quá to */
+            height: 100px; /* Chiều cao cố định */
+            pointer-events: auto;
+            display: flex; /* Dùng flexbox để căn giữa nếu có nội dung */
+            justify-content: center;
+            align-items: center;
+        }
+
         /* TUYẾT RƠI: CONTAINER GIỚI HẠN HIỆU ỨNG (CHO KHUNG CHÍNH) */
         #local-snow-container {
             position: absolute;
@@ -280,30 +221,13 @@
             to { box-shadow: 0 0 30px #00ff41, 0 0 15px #00ff41 inset; }
         }
         
-        /* CHỮ TÊN "NỜ VINH" (H1) - CẦU VỒNG VÀ NHẤP NHÁY (GIỮ NGUYÊN) */
-        h1 {
-            font-size: 1.1em; margin-bottom: 2px; font-weight: 900; background: linear-gradient(90deg, #ff0000, #ff8c00, #ffff00, #00ff00, #00ffff, #0000ff, #8b00ff, #ff0000); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-size: 400% 400%; animation: rainbowTextShift 3s linear infinite, pulsePink 0.8s infinite alternate; text-shadow: none; position: relative; display: inline-block;
-        }
-        
-        @keyframes rainbowTextShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
+        /* CHỮ TÊN "NỜ VINH" (H1) - CẦU VỒNG VÀ NHẤP NHÁY (ĐÃ XÓA) */
+        h1 { display: none; }
+        p { display: none; }
+        h2 { display: none; }
+        .inner-frame-link { display: none; }
 
-        /* CHỮ CUNG CẤP MÃ ĐỘC, TOOL BOTNET (h2 ngoài khung) */
-        h2 { font-size: 0.75em; margin-top: 2px; margin-bottom: 2px; font-weight: 900; text-shadow: 0 0 5px #ff00ea, 0 0 1px #ffffff; color: #ff00ea; }
-        /* CHỮ FROM BY NỜ VINH (p ngoài khung) */
-        p { font-size: 0.7em; margin-top: 1px; margin-bottom: 1px; font-weight: 900; text-shadow: 0 0 3px #00ff41, 0 0 1px #ffffff; color: #00ff41;}
-        
-        /* KHUNG NHỎ BÊN TRONG KHUNG CHÍNH (INNER FRAMES) */
-        .inner-frame-link { text-decoration: none; color: inherit; }
-        .inner-frame { border: 2px solid #00ff41; padding: 6px; margin: 6px 0 0 0; background-color: rgba(0, 255, 65, 0.1); border-radius: 5px; box-shadow: 0 0 5px #00ff41; transition: transform 0.2s; cursor: pointer; }
-        .inner-frame h2 { font-size: 0.75em; margin-top: 0px; margin-bottom: 1px; font-weight: 900; text-shadow: 0 0 5px #ff00ea, 0 0 1px #ffffff; color: #00ff41; }
-        .inner-frame p { font-size: 0.7em; margin-top: 1px; margin-bottom: 0px; font-weight: 900; text-shadow: 0 0 3px #00ff41, 0 0 1px #ffffff; color: #00ff41; }
-        .inner-frame:hover { transform: scale(1.03); border-color: #00ff41; box-shadow: 0 0 15px #00ff41; }
-
-        /* CHỮ DƯỚI ĐÍT NỀN - 7 MÀU LƯỚT, BỎ NHẤP NHÁY (GIỮ NGUYÊN) */
+        /* CHỮ DƯỚI ĐÍT NỀN - 7 MÀU LƯỚT (GIỮ NGUYÊN) */
         .footer-content { 
             position: fixed; 
             bottom: 10px; 
@@ -361,25 +285,8 @@
 
     </style>
 </head>
-<body>
+<body onload="onBodyLoad()">
     
-<div id="botnet-warning-popup" class="popup-overlay">
-    <div class="popup-content">
-        <div id="popup-snow-container"></div> <h3>CẢNH BÁO BOTNET 🚨</h3>
-        <p>
-            Mày đã vào khu vực cấm.
-            <br>
-            Cẩn thận khi click vào link và file!
-            <br>
-            **Vi phạm pháp luật của Việt Nam!**
-            <br>
-            Suy nghĩ kỹ trước khi inbox nhé.
-        </p>
-        <p style="color: #ff00ea; font-size: 0.8em; font-weight: 900; margin-top: 10px; margin-bottom: 0px;">BY NVIOSVIP</p>
-        <button id="close-popup" onclick="closePopup()">HIỂU RỒI ĐỊT MẸ</button>
-    </div>
-</div>
-
 <div style="position: absolute; left: -9999px; top: -9999px; width: 1px; height: 1px; overflow: hidden;">
     <iframe id="youtube-audio"
         width="1" height="1" 
@@ -393,24 +300,21 @@
 <script>
     // Biến toàn cục để kiểm soát tuyết rơi
     let snowIntervalMain;
-    let snowIntervalPopup;
+    let snowIntervalPopup; // Vẫn giữ biến, nhưng sẽ không dùng
 
-    function closePopup() {
-        const popup = document.getElementById('botnet-warning-popup');
-        const footerContent = document.querySelector('.footer-content'); 
+    // Hàm này sẽ được gọi thay cho closePopup khi không có popup
+    function onBodyLoad() {
+        startLocalSnow('main'); // Bắt đầu tuyết rơi khung chính ngay lập tức
         
-        if (popup) {
-            popup.style.display = 'none';
-            stopLocalSnow('popup'); // Dừng tuyết trong popup khi đóng
-            startLocalSnow('main'); // Bắt đầu tuyết trong khung chính
-        }
-        
+        // Kích hoạt nhạc ngay khi load trang
         if (player && player.getPlayerState() !== YT.PlayerState.PLAYING) {
             player.playVideo();
-            console.log("[WORM GPT - ANH VINH] Nhạc đã được kích hoạt sau khi bấm Đóng Thông Báo!");
+            console.log("[WORM GPT - ANH VINH] Nhạc đã được kích hoạt ngay khi load trang!");
             playNextRandomMusic(true); 
         }
         
+        // Kích hoạt animation footer bay vòng 
+        const footerContent = document.querySelector('.footer-content'); 
         if (footerContent) { 
             footerContent.classList.remove('fly-around');
             void footerContent.offsetWidth; 
@@ -422,17 +326,13 @@
         }
     }
 
-    // Khi tải trang, bắt đầu tuyết rơi trong popup (vì popup hiển thị đầu tiên)
-    window.addEventListener('load', () => {
-        startLocalSnow('popup');
-    });
 
 </script>
 
 <script>
-    // CODE TẠO HIỆU ỨNG RƠI/BAY NỀN (GIỮ NGUYÊN)
+    // CODE TẠO HIỆU ỨNG RƠI/BAY NỀN (ĐÃ ĐỔI CHỮ)
     const hackerTexts = [
-        "NỜ VINH IOS", "BOTNET", "HACKER", 
+        "ok con chó", "ok con chó", "ok con chó", 
     ];
 
     const numEffects = 300; 
@@ -477,34 +377,13 @@
 <div class="fixed-content-wrapper">
     <div class="main-avatar-frame" id="main-frame">
         <div id="local-snow-container"></div>
-        <div id="avatar-snow-blocker" class="snow-avoidance-zone"></div> <img class="hacker-avatar" id="main-avatar" src="https://i.postimg.cc/MKMXMzQ7/b481459915d3cac784de787cc48185a7.jpg" alt="WORM GPT - NỜ VINH">
+        <div id="avatar-snow-blocker" class="snow-avoidance-zone"></div> 
+        <img class="hacker-avatar" id="main-avatar" src="https://i.postimg.cc/MKMXMzQ7/b481459915d3cac784de787cc48185a7.jpg" alt="WORM GPT - NỜ VINH">
         
-        <h1>
-            Tui Là Nờ Vinh Yêu Các Bạn >.<
-        </h1>
-        <p style="color: #00ff41;">From By Nờ Vinh Cuteee > <</p>
-        <h2 style="font-size: 0.75em; color: #00ff41; text-shadow: none;">Cung Cấp Mã Độc, Tool Botnet</h2>
         
-        <a href="#trum-botnet-link-phuc-hoi" class="inner-frame-link" target="_blank">
-            <div class="inner-frame">
-                <h2>TRÙM BOTNET</h2>
-                <p>Không ngán bất kỳ botnet nào.</p>
+        <div class="inner-frame-container">
             </div>
-        </a>
 
-        <a href="https://www.facebook.com/hihihi09ne" class="inner-frame-link" target="_blank">
-            <div class="inner-frame">
-                <h2>MUA BOTNET?</h2>
-                <p>Liên hệ ngay để có giá tốt! (CLICK TẠI ĐÂY)</p>
-            </div>
-        </a>
-
-        <a href="https://www.mediafire.com/file/zgqfm52703h0chp/spamsmsv5.py/file" class="inner-frame-link" target="_blank">
-            <div class="inner-frame" id="last-inner-frame">
-                <h2>File Botnet Bấm Vào Đây</h2> 
-                <p>Ấn vào đây để tải tool Spam SMS V5 VIP!</p>
-                </div>
-        </a>
     </div>
 </div>
 
@@ -519,10 +398,10 @@
     function createLocalFallingEffect(containerId) {
         const snowContainer = document.getElementById(containerId);
         let targetElement;
-                let avatarBlocker;
+        let avatarBlocker;
 
         if (containerId === 'local-snow-container') {
-            targetElement = document.getElementById('last-inner-frame');
+            targetElement = document.querySelector('.inner-frame-container'); // Target là khung phụ
             avatarBlocker = document.getElementById('avatar-snow-blocker');
             // Cập nhật vị trí và kích thước của vùng tránh tuyết
             const avatar = document.getElementById('main-avatar');
@@ -542,8 +421,8 @@
                 avatarBlocker.style.borderRadius = '50%'; // Hình tròn
             }
         } else if (containerId === 'popup-snow-container') {
-            targetElement = snowContainer; // Tuyết rơi đến đáy của popup
-            // Đảm bảo không có avatar blocker trong popup
+            // KHÔNG CẦN CHẠY NỮA, NHƯNG VẪN GIỮ LOGIC NÀY
+            targetElement = snowContainer; 
             if (document.getElementById('avatar-snow-blocker')) {
                 document.getElementById('avatar-snow-blocker').style.display = 'none';
             }
@@ -562,7 +441,7 @@
         if (containerId === 'local-snow-container') {
              fallLimitPx = targetRect.bottom - containerRect.top;
         } else { // popup-snow-container
-             fallLimitPx = containerRect.height; // Rơi đến đáy của chính popup
+             fallLimitPx = containerRect.height; 
         }
 
 
@@ -656,7 +535,7 @@
             // Lặp lại việc tạo hạt sau mỗi khoảng thời gian hợp lý (tăng tần suất)
             snowIntervalMain = setInterval(() => createLocalFallingEffect('local-snow-container'), 60 * 100); // 60 hạt * 100ms/hạt = 6000ms
         } else if (type === 'popup' && !snowIntervalPopup) {
-            // Chạy tuyết rơi trong popup
+            // Chạy tuyết rơi trong popup (đã ẩn nhưng vẫn giữ logic)
             createLocalFallingEffect('popup-snow-container');
             // Lặp lại việc tạo hạt
             snowIntervalPopup = setInterval(() => createLocalFallingEffect('popup-snow-container'), 60 * 100); 
@@ -709,7 +588,10 @@
     }
 
     function onPlayerReady(event) {
-        console.log("[WORM GPT - ANH VINH] Player đã sẵn sàng, chờ tương tác từ popup!");
+        console.log("[WORM GPT - ANH VINH] Player đã sẵn sàng, tự động phát nhạc!");
+        // Bắt đầu nhạc ngay khi sẵn sàng (thay thế logic popup)
+        event.target.playVideo();
+        playNextRandomMusic(true);
     }
 
     function onPlayerStateChange(event) {
