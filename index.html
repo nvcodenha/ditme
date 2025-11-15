@@ -2,7 +2,8 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Địt Mẹ Mày</title> <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"> 
+    <title>Địt Mẹ Mày</title> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"> 
 <style>
         /* FIX LỖI KÉO XUỐN`G/ZOOM TRIỆT ĐỂ */
         html, body {
@@ -27,10 +28,7 @@
         /* POPUP CẢNH BÁO (ĐÃ XÓA PHẦN HIỂN THỊ POPUP) */
         .popup-overlay { display: none !important; }
         .popup-content { display: none !important; }
-
-        /* TUYẾT RƠI CỤC BỘ TRONG POPUP (ĐÃ ẨN) */
         #popup-snow-container { display: none !important; }
-
 
         /* KHUNG CHỨA TOÀN BỘ NỘI DUNG CHÍNH (ĐỂ CỐ ĐỊNH Ở GIỮA) */
         .fixed-content-wrapper {
@@ -48,7 +46,7 @@
             pointer-events: none; 
         }
         
-        /* Chữ nền chung - ĐÃ ĐỔI SANG MÀU HỒNG và CHỮ "ok con chó" */
+        /* Chữ nền chung */
         .hacker-text-effect {
             position: absolute; 
             color: rgba(255, 0, 255, 0.3); /* Màu hồng */
@@ -61,16 +59,16 @@
             will-change: transform, opacity; 
         }
 
-        /* TRÁI TIM XANH LÁ HACKER (VẼ BẰNG CSS) */
+        /* TRÁI TIM ĐỎ PHÁT SÁNG (VẼ BẰNG CSS) - ĐÃ SỬA MÀU */
         .hacker-heart-effect {
             position: absolute;
-            background-color: #00ff41; 
+            background-color: #ff0000; /* ĐÃ ĐỔI SANG ĐỎ */
             pointer-events: none;
             opacity: 0;
             z-index: 1;
             will-change: transform, opacity;
             
-            box-shadow: 0 0 5px #00ff41, 0 0 10px #00ff41, 0 0 15px #00ff41; 
+            box-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000, 0 0 30px #ff0000; /* PHÁT SÁNG MẠNH */
             
             width: var(--heart-base-size); 
             height: var(--heart-base-size); 
@@ -86,14 +84,14 @@
             position: absolute;
             width: var(--heart-base-size);
             height: var(--heart-base-size);
-            background-color: #00ff41; 
+            background-color: #ff0000; /* ĐÃ ĐỔI SANG ĐỎ */
             border-radius: 50%; 
             box-shadow: inherit; 
         }
 
         .hacker-heart-effect::before { top: calc(var(--heart-base-size) / -2); left: 0; }
         .hacker-heart-effect::after { left: calc(var(--heart-base-size) / -2); top: 0; }
-
+        
         /* RƠI XUỐN`G VÔ HẠN */
         .falling-text, .falling-heart { 
             animation: fallAndFade var(--animation-duration) infinite linear; 
@@ -157,7 +155,7 @@
             max-width: 220px; 
             height: 100px; 
             pointer-events: auto;
-            overflow: hidden; /* Quan trọng để che nội dung */
+            overflow: hidden; 
             cursor: pointer;
             transition: all 0.5s ease-in-out; 
             position: relative;
@@ -167,14 +165,14 @@
             align-items: center;
         }
 
-        /* Nắp đậy (Cover) - Bìa sách/Che tin nhắn */
+        /* Nắp đậy (Cover) - Bìa sách/Che tin nhắn - ĐÃ SỬA MÀU HỒNG NHẠT */
         .message-cover {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: #ff00ff; /* Màu hồng đậm */
+            background-color: #ffddff; /* MÀU HỒNG CỰC NHẠT */
             border-radius: 5px;
             display: flex;
             justify-content: center;
@@ -183,7 +181,7 @@
             font-weight: 900;
             font-size: 0.9em;
             text-shadow: 0 0 5px #ffffff;
-            z-index: 20; /* Che nội dung chính */
+            z-index: 20; 
             transition: transform 0.5s ease-in-out;
         }
 
@@ -228,7 +226,7 @@
 
         /* Hiệu ứng khi được MỞ */
         .inner-frame-container.opened .message-cover {
-            transform: translateY(100%); /* Nắp đậy trượt xuống/biến mất */
+            transform: translateY(100%); 
         }
 
 
@@ -243,7 +241,7 @@
             pointer-events: none; 
             z-index: 5; 
         }
-
+        
         /* *** TUYẾT RƠI: HIỆU ỨNG HẠT TRẮNG CỰC ĐẸP *** */
         .falling-effect-local {
             position: absolute;
@@ -266,7 +264,7 @@
         }
 
 
-        /* AVATAR CẦU VỒNG 7 MÀU CHUYỂN ĐỘ (ĐÃ ĐỔI LINK ẢNH) */
+        /* AVATAR CẦU VỒNG 7 MÀU CHUYỂN ĐỘ */
         .hacker-avatar {
             width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin-bottom: 5px; border: 2px solid transparent; background-origin: border-box; background-clip: content-box, border-box; background-image: linear-gradient(to right, black, black), linear-gradient(90deg, #ff0000, #ff8c00, #ffff00, #00ff00, #00ffff, #0000ff, #8b00ff, #ff0000); background-size: 400% 400%; background-position: 0% 50%; animation: rainbowBorderShift 3s linear infinite; box-shadow: none !important;
             position: relative; 
@@ -307,7 +305,7 @@
             text-fill-color: transparent;
             background-size: 400% 400%;
             font-weight: bold; 
-            animation: rainbowTextShift 3s linear infinite, pulsePink 0.8s infinite alternate; /* Thêm pulsePink */
+            animation: rainbowTextShift 3s linear infinite, pulsePink 0.8s infinite alternate; /* Cầu vồng và Nhấp nháy */
             z-index: 10;
             pointer-events: none; 
             display: flex; 
@@ -425,7 +423,7 @@
 </script>
 
 <script>
-    // CODE TẠO HIỆU ỨNG RƠI/BAY NỀN (CHỮ "ok con chó" màu hồng)
+    // CODE TẠO HIỆU ỨNG RƠI/BAY NỀN (CHỮ "ok con chó" màu hồng và trái tim đỏ)
     const hackerTexts = [
         "ok con chó", "ok con chó", "ok con chó", 
     ];
@@ -483,10 +481,9 @@
             </div>
 
             <div class="message-content">
-                <p>Hệ thống: Kích hoạt BOTNET Level **MAX**.</p>
-                <p>Tài liệu: **WORM GPT** đã bị bẻ khóa.</p>
-                <p>Admin: **[VINH]**</p>
-                <span>Tin nhắn chỉ hiện 3s sau đó tự đóng.</span>
+                <p>Cảm ơn tấm lòng tốt , chó đẻ của mày</p>
+                <p style="margin-top: 5px;">By <span>Quốc Tấn</span></p>
+                <span style="font-size: 0.6em; margin-top: 5px;">Tin nhắn chỉ hiện 3s sau đó tự đóng.</span>
             </div>
 
         </div>
@@ -496,7 +493,7 @@
 
     
 <div class="footer-content" id="footer-text-rotate">
-        Địt Mẹ Mày Cảm Ơn Nha
+        Cảm Ơn Mày Nha
         <img class="footer-gif" src="https://media4.giphy.com/media/v1.Y2lkPTZjMDliOTUyN2pqdWliaXlreGFsOWViOHRqdHRlZ2oxZmVxd3ZxZmp1eHppMDNncSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/sh11BmCf8HY8F0c5GN/giphy.gif" alt="GIF Ếch Toilet">
 </div>
 
@@ -647,11 +644,11 @@
         }
     });
     
-    // CODE YOUTUBE API (GIỮ NGUYÊN)
+    // CODE YOUTUBE API (ĐÃ SỬA: CHẠY NHẠC TỪ ID VIDEO '2' NGAY LẬP TỨC)
     let player;
-    let currentVideoId = '8fGulQZ0QHY'; 
+    let currentVideoId = '2'; // ĐÃ ĐỔI THÀNH '2'
     const musicList = [ 
-        '8fGulQZ0QHY', // Link 2 (Mở đầu)
+        '2', // Link Mới (Mở đầu)
         'WAw_8GjjF5M', // Link 3
         'qQDjCiyFIiY', // Link 4
     ];
