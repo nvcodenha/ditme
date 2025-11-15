@@ -32,7 +32,6 @@
         /* Chữ RƠI (Chậm, 10s) */
         .message.fall {
              opacity: 0; /* Khởi đầu ẩn cho chữ rơi */
-             /* Loại bỏ nhấp nháy 7 màu */
              animation: fallAndFade 10s forwards; 
              -webkit-animation: fallAndFade 10s forwards;
         }
@@ -40,17 +39,16 @@
         /* Chữ LƠ LỬNG (Vĩnh viễn & NHANH HƠN: 3s) */
         .message.floating {
             opacity: 1; /* Hiện ngay lập tức */
-            /* Loại bỏ nhấp nháy 7 màu */
             animation: hoverBubble 3s infinite alternate ease-in-out; 
             -webkit-animation: hoverBubble 3s infinite alternate ease-in-out;
         }
 
-        /* Keyframes RƠI XUỐNG ĐÍT (BIẾN MẤT RẤT NHANH TẠI 100% - SẼ BỊ JS CAN THIỆP) */
+        /* Keyframes RƠI XUỐNG ĐÍT */
         @keyframes fallAndFade {
             0% { opacity: 0; transform: translateY(-50px) scale(1); }
             5% { opacity: 0.9; }
             99% { opacity: 0.9; transform: translateY(100vh) scale(1); } 
-            100% { opacity: 0; transform: translateY(100vh) scale(0); } 
+            100% { opacity: 0; transform: translateY(100vh) scale(0); } /* Bị JS CAN THIỆP TRƯỚC LÚC NÀY */
         }
         @-webkit-keyframes fallAndFade {
             0% { opacity: 0; -webkit-transform: translateY(-50px) scale(1); }
@@ -126,9 +124,8 @@
         const STICKER_WIDTH = 250; 
         const STICKER_HEIGHT = 350; 
 
-        // Giờ đây, hàm này chỉ dùng cho mục đích NÉ KHUNG, chứ không tạo ra chữ ban đầu nữa
+        // Hàm NÉ KHUNG VẪN GIỮ NGUYÊN NHƯ VỊ TRÍ CUỐI CÙNG CỦA CHỮ LƠ LỬNG
         function getRandomPosition(element, viewportWidth, viewportHeight) {
-            // ... (Hàm này vẫn giữ nguyên để đảm bảo chữ không lơ lửng bên trong khung)
             const elementWidth = element.offsetWidth;
             const elementHeight = element.offsetHeight;
             
@@ -161,7 +158,6 @@
         // HÀM TẠO CHỮ (TẤT CẢ ĐỀU LÀ CHỮ RƠI)
         function createMessage() {
             
-            // Chữ rơi chỉ lấy từ danh sách giới hạn
             const text = messages[Math.floor(Math.random() * messages.length)];
 
             const messageElement = document.createElement('div');
@@ -196,17 +192,15 @@
                 // 2. Set vị trí cố định (Đáy màn hình - chiều cao chữ)
                 const finalTop = window.innerHeight - messageElement.offsetHeight; 
                 
-                // Vị trí X MỚI: Tính toán lại vị trí X để NÉ KHUNG trước khi trở thành LƠ LỬNG
+                // TÍNH TOÁN LẠI VỊ TRÍ X ĐỂ NÉ KHUNG TRƯỚC KHI LƠ LỬNG
                 const viewportWidth = window.innerWidth;
-                const viewportHeight = window.innerHeight;
-                
                 const currentPos = messageElement.getBoundingClientRect();
                 let newX = currentPos.left;
                 
                 const centerX = viewportWidth / 2;
                 const banRadiusX = STICKER_WIDTH / 2 + 20;
                 
-                // Nếu chữ rơi vào gần khu vực cấm (theo trục X)
+                // NẾU VỊ TRÍ X CUỐI CÙNG NẰM TRONG VÙNG CẤM (THEO CHIỀU NGANG)
                 if (Math.abs(currentPos.left + messageElement.offsetWidth / 2 - centerX) < banRadiusX) {
                     // Đẩy nó sang trái hoặc phải của khung
                     if (currentPos.left < centerX) {
@@ -214,7 +208,7 @@
                     } else {
                         newX = centerX + banRadiusX; // Đẩy sang phải
                     }
-                    // Đảm bảo không vượt quá biên màn hình
+                    // Giữ cho nó trong màn hình
                     newX = Math.min(Math.max(0, newX), viewportWidth - messageElement.offsetWidth);
                 }
                 
@@ -225,10 +219,10 @@
                 messageElement.classList.remove('fall');
                 messageElement.classList.add('floating');
                 
-                // Phải set lại animation delay ngẫu nhiên cho hoverBubble
+                // Bắt đầu animation lơ lửng
                 messageElement.style.animationDelay = (Math.random() * 4) + 's';
 
-            }, totalTime - 50); // Giật lại 50ms trước khi animation rơi kết thúc
+            }, totalTime - 50); // CHẠY TRƯỚC 50ms ĐỂ TRÁNH BIẾN MẤT
             
             return messageElement;
         }
