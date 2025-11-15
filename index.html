@@ -3,60 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lời Nhắn Lơ Lửng Toàn Màn Hình Vĩnh Viễn</title>
+    <title>Lời Nhắn Lơ Lửng Ít & Né Khung Vĩnh Viễn</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
             background-color: #000000;
             margin: 0;
-            overflow: hidden; /* Quan trọng để chữ không bị cuộn */
+            overflow: hidden; 
             display: flex; 
             justify-content: center;
             align-items: center;
             height: 100vh;
         }
         
+        /* Chữ hiện ngay lập tức và không cần animation xuất hiện */
         .message {
             position: absolute;
             font-size: 1.2em; 
             font-weight: bold;
             white-space: nowrap;
-            opacity: 0;
+            opacity: 1; /* HIỆN NGAY LẬP TỨC */
             z-index: 10; 
             color: #ffffff; 
             
-            /* Animation LƠ LỬNG VĨNH VIỄN */
+            /* Animation LẮC LƯ NHANH VÀ VĨNH VIỄN */
             animation: 
-                floatingAppear 2s forwards, /* Xuất hiện ban đầu */
-                hoverBubble 4s infinite alternate ease-in-out, /* Lắc lư CỰC NHANH: 4s */
+                hoverBubble 4s infinite alternate ease-in-out, 
                 blinkSevenColors 0.15s infinite step-end; 
             -webkit-animation: 
-                floatingAppear 2s forwards, 
                 hoverBubble 4s infinite alternate ease-in-out, 
                 blinkSevenColors 0.15s infinite step-end;
-        }
-
-        /* Keyframes cho chữ LƠ LỬNG (Xuất hiện và giữ VĨNH VIỄN) */
-        @keyframes floatingAppear {
-            0% { opacity: 0; transform: scale(0.8); }
-            100% { opacity: 1; transform: scale(1); } /* Giữ opacity và scale */
-        }
-        @-webkit-keyframes floatingAppear {
-            0% { opacity: 0; -webkit-transform: scale(0.8); }
-            100% { opacity: 1; -webkit-transform: scale(1); }
         }
 
         /* Keyframes BONG BÓNG LẮC LƯ NHANH */
         @keyframes hoverBubble {
             from { transform: translateY(0px) rotate(1deg); }
-            to { transform: translateY(-30px) rotate(-1deg); } /* Lắc lư mạnh hơn */
+            to { transform: translateY(-30px) rotate(-1deg); } 
         }
         @-webkit-keyframes hoverBubble {
             from { -webkit-transform: translateY(0px) rotate(1deg); }
             to { -webkit-transform: translateY(-30px) rotate(-1deg); }
         }
         
-        /* Keyframes ĐỔI MÀU NHANH (0.15s) */
+        /* Keyframes ĐỔI MÀU CỰC NHANH (0.15s) */
         @keyframes blinkSevenColors {
             0%, 14% { text-shadow: 0 0 7px #FF0000, 0 0 10px rgba(255, 0, 0, 0.5); }
             15%, 28% { text-shadow: 0 0 7px #FFA500, 0 0 10px rgba(255, 165, 0, 0.5); }
@@ -80,6 +69,13 @@
         .message.icon {
             text-shadow: 0 0 10px rgba(255, 255, 0, 0.8), 0 0 20px rgba(255, 165, 0, 0.5); 
             color: inherit; 
+            /* Đảm bảo icon cũng có pulseIcon */
+            animation: 
+                hoverBubble 4s infinite alternate ease-in-out, 
+                pulseIcon 1s infinite alternate; 
+            -webkit-animation: 
+                hoverBubble 4s infinite alternate ease-in-out, 
+                pulseIcon 1s infinite alternate;
         }
 
         @keyframes pulseIcon {
@@ -119,30 +115,73 @@
             "🖕🏻🖕🏻🖕🏻",
         ];
         
+        // Kích thước của khu vực sticker (ĐÃ TÍNH TOÁN)
+        const STICKER_WIDTH = 350;
+        const STICKER_HEIGHT = 350; // Ước tính chiều cao
+        
+        function getRandomPosition(element) {
+            const viewportWidth = window.innerWidth;
+            const viewportHeight = window.innerHeight;
+            const elementWidth = element.offsetWidth;
+            const elementHeight = element.offsetHeight;
+            
+            // Tìm tâm của màn hình
+            const centerX = viewportWidth / 2;
+            const centerY = viewportHeight / 2;
+            
+            // Khu vực cấm (quanh sticker)
+            const banRadiusX = STICKER_WIDTH / 2 + 50; // Thêm đệm 50px
+            const banRadiusY = STICKER_HEIGHT / 2 + 50;
+            
+            let x, y;
+            let tries = 0;
+            
+            // Lặp cho đến khi tìm được vị trí nằm ngoài khu vực cấm
+            do {
+                // Vị trí ngẫu nhiên
+                x = Math.random() * (viewportWidth - elementWidth);
+                y = Math.random() * (viewportHeight - elementHeight);
+                
+                // Kiểm tra xem vị trí có nằm trong khu vực cấm không
+                const distanceX = Math.abs(x + elementWidth / 2 - centerX);
+                const distanceY = Math.abs(y + elementHeight / 2 - centerY);
+                
+                // Nếu vượt quá giới hạn hoặc lặp quá nhiều lần, thoát
+                if (distanceX > banRadiusX || distanceY > banRadiusY || tries > 100) {
+                    break; 
+                }
+                tries++;
+                
+            } while (true);
+
+            return { x, y };
+        }
+        
         function createMessage() {
             const text = messages[Math.floor(Math.random() * messages.length)];
             const messageElement = document.createElement('div');
             messageElement.classList.add('message');
             messageElement.textContent = text;
             
-            // TẤT CẢ ĐỀU LÀ CHỮ LƠ LỬNG
-            
-            // Vị trí NGẪU NHIÊN toàn màn hình 
-            messageElement.style.left = Math.random() * (window.innerWidth - 150) + 'px';
-            messageElement.style.top = Math.random() * (window.innerHeight - 100) + 'px';
-            
-            // Random delay cho chuyển động bong bóng để chúng không đồng bộ
-            messageElement.style.animationDelay = (Math.random() * 2) + 's';
-
             if (text.includes('🖕🏻')) {
                 messageElement.classList.add('icon');
             }
             
+            // Thêm vào body trước để có thể đo kích thước (offset)
             document.body.appendChild(messageElement);
+            
+            // Lấy vị trí ngẫu nhiên NÉ KHUNG
+            const pos = getRandomPosition(messageElement);
+            
+            messageElement.style.left = pos.x + 'px';
+            messageElement.style.top = pos.y + 'px'; 
+            
+            // Random delay cho chuyển động bong bóng để chúng không đồng bộ
+            messageElement.style.animationDelay = (Math.random() * 2) + 's';
         }
 
-        // Tần suất tạo chữ tổng thể (tăng nhẹ so với trước để màn hình đầy hơn)
-        setInterval(createMessage, 100); 
+        // Tần suất tạo chữ tổng thể (giảm xuống 200ms để ít chữ hơn)
+        setInterval(createMessage, 200); 
 
     </script>
 </body>
