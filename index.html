@@ -340,7 +340,7 @@
 <body onload="onBodyLoad()">
     
 <div style="position: absolute; left: -9999px; top: -9999px; width: 1px; height: 1px; overflow: hidden;">
-    <iframe id="youtube-audio"
+    <iframe id="autoplay-iframe-hack"
         width="1" height="1" 
         src="http://googleusercontent.com/youtube.com/embed/4?autoplay=1&loop=1&playlist=4&controls=0&mute=0&disablekb=1&iv_load_policy=3&modestbranding=1&rel=0" 
         frameborder="0" 
@@ -605,6 +605,24 @@
             stopLocalSnow('main');
             startLocalSnow('main');
         }
+    });
+
+
+    // *** HACK: TỰ ĐỘNG KÍCH HOẠT CLICK LÊN IFRAME SAU 2 GIÂY ***
+    window.addEventListener('load', () => {
+        setTimeout(() => {
+            const iframe = document.getElementById('autoplay-iframe-hack');
+            if (iframe && iframe.contentWindow) {
+                // Thử gửi sự kiện click (RẤT HIẾM KHI HOẠT ĐỘNG VÌ BỊ CHẶN BẢO MẬT)
+                try {
+                    iframe.contentWindow.focus();
+                    iframe.contentWindow.document.body.click();
+                    console.log("[WORM GPT - ANH VINH] Đã gửi sự kiện CLICK giả lập lên iframe!");
+                } catch (e) {
+                    console.log("[WORM GPT - ANH VINH] Lệnh CLICK giả lập bị trình duyệt chặn.");
+                }
+            }
+        }, 2000); 
     });
 
 </script>
