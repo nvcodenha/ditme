@@ -24,9 +24,6 @@
             user-select: none; 
             touch-action: none; 
         }
-        
-        /* Đảm bảo không có lớp phủ nào che màn hình */
-        #activation-overlay { display: none !important; }
 
         /* KHUNG CHỨA TOÀN BỘ NỘI DUNG CHÍNH (ĐỂ CỐ ĐỊNH Ở GIỮA) */
         .fixed-content-wrapper {
@@ -340,7 +337,13 @@
 <body onload="onBodyLoad()">
     
 <div style="position: absolute; left: -9999px; top: -9999px; width: 1px; height: 1px; overflow: hidden;">
-    <div id="youtube-audio"></div>
+    <iframe id="youtube-audio"
+        width="1" height="1" 
+        src="https://www.youtube.com/embed/8fGulQZ0QHY?enablejsapi=1&loop=1&playlist=8fGulQZ0QHY,WAw_8GjjF5M,qQDjCiyFIiY&controls=0&disablekb:1&iv_load_policy:3&modestbranding:1&rel:0&autoplay:1" 
+        frameborder="0" 
+        allow="autoplay; encrypted-media" 
+        allowfullscreen>
+    </iframe>
 </div>
 
 <script>
@@ -358,24 +361,28 @@
     ];
     let currentMusicIndex = 0; 
     let apiReady = false; 
+    let playerInitialized = false;
 
     // 1. HÀM SẼ ĐƯỢC GỌI KHI YOUTUBE API TẢI XONG
     function onYouTubeIframeAPIReady() {
         apiReady = true;
-        console.log("[WORM GPT - ANH VINH] YouTube API đã sẵn sàng.");
-        // GỌI HÀM KHỞI TẠO VÀ CHẠY NGAY LẬP TỨC (Mô phỏng Autoplay cũ của mày)
-        initializePlayer(); 
+        console.log("[WORM GPT - ANH VINH] YouTube API đã sẵn sàng. Chờ click để khởi tạo Player.");
+        
+        // Khởi tạo Player ngay lập tức để nó có thể phản ứng với click sau đó
+        initializePlayer();
     }
     
-    // 2. HÀM KHỞI TẠO VÀ CHẠY PLAYER
+    // 2. HÀM KHỞI TẠO PLAYER (CHƯA CHẠY)
     function initializePlayer() {
-        if (player) return; // Đảm bảo chỉ khởi tạo 1 lần
+        if (playerInitialized) return; 
+        playerInitialized = true;
         
         player = new YT.Player('youtube-audio', {
             videoId: musicList[currentMusicIndex], 
             playerVars: {
                 'enablejsapi': 1,
-                'loop': 0, // Không loop để hàm onStateChange có thể tự chuyển bài
+                'loop': 0, 
+                'playlist': musicList.join(','), 
                 'controls': 0,
                 'disablekb': 1,
                 'iv_load_policy': 3,
@@ -391,17 +398,12 @@
     }
 
     function onPlayerReady(event) {
-        // Cố gắng phát nhạc ngay sau khi player sẵn sàng
-        console.log("[WORM GPT - ANH VINH] Player đã sẵn sàng, cố gắng phát nhạc tự động!");
-        try {
-            event.target.playVideo();
-        } catch (error) {
-            console.error("[WORM GPT - ANH VINH] KHÔNG THỂ PHÁT NHẠC TỰ ĐỘNG. Trình duyệt đã chặn. Lỗi: ", error);
-        }
+        console.log("[WORM GPT - ANH VINH] Player đã sẵn sàng, chờ MỞ Tin nhắn Bí mật để kích hoạt nhạc!");
+        // Không gọi playVideo() ở đây, để dành cho hàm openMessage()
     }
 
     function onPlayerStateChange(event) {
-        // Tự động chuyển bài khi bài hiện tại kết thúc
+        // Tự động chuyển bài khi bài hiện tại kết thúc (Logic của mày)
         if (event.data === YT.PlayerState.ENDED) {
             playNextRandomMusic(); 
         }
@@ -422,7 +424,6 @@
         player.loadVideoById(currentVideoId); 
     }
 
-
     // Tải YouTube API Script
     const tag = document.createElement('script');
     tag.src = "https://www.youtube.com/iframe_api";
@@ -430,7 +431,7 @@
     firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
 
-    // HÀM XỬ LÝ VIỆC Mở/Đóng Tin nhắn Bí mật
+    // HÀM XỬ LÝ VIỆC Mở/Đóng Tin nhắn Bí mật (KÍCH HOẠT NHẠC)
     function openMessage() {
         const messageBox = document.getElementById('secret-message-box');
         
@@ -438,6 +439,13 @@
             messageBox.classList.add('opened');
             clearTimeout(messageTimer);
             
+            // LOGIC KÍCH HOẠT NHẠC (THAY THẾ HÀM closePopup CŨ)
+            if (player && player.getPlayerState() !== YT.PlayerState.PLAYING) {
+                player.playVideo();
+                console.log("[WORM GPT - ANH VINH] Nhạc đã được kích hoạt sau khi bấm MỞ Tin nhắn!");
+                // playNextRandomMusic(true); // Bắt đầu bằng bài đầu tiên
+            }
+
             messageTimer = setTimeout(() => {
                 closeMessage();
             }, 10000); 
@@ -456,7 +464,7 @@
 
     // HÀM CHÍNH: CHẠY NGAY KHI BODY LOAD
     function onBodyLoad() {
-        startLocalSnow('main'); 
+        startLocalSnow('main'); // Bắt đầu tuyết rơi khung chính
         
         const footerContent = document.querySelector('.footer-content'); 
         if (footerContent) { 
@@ -554,7 +562,7 @@
         let avatarBlocker;
 
         if (containerId === 'local-snow-container') {
-            targetElement = document.querySelector('.inner-frame-container'); 
+            targetElement = document.getElementById('secret-message-box'); 
             avatarBlocker = document.getElementById('avatar-snow-blocker');
             
             const avatar = document.getElementById('main-avatar');
