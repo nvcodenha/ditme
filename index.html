@@ -17,16 +17,16 @@
         }
         
         .message {
-            position: absolute; /* BẮT BUỘC CHO HIỆU ỨNG RƠI */
+            position: absolute;
             font-size: 1.2em; 
             font-weight: bold;
             white-space: nowrap;
             opacity: 0;
             
-            /* Animation với tiền tố để tương thích trình duyệt cũ */
+            /* Animation CỰC NHANH VÀ RƠI */
             animation: 
                 fallAndFade 12s forwards, 
-                blinkSevenColors 0.2s infinite step-end; 
+                blinkSevenColors 0.2s infinite step-end; /* Đổi màu 0.2s */
             -webkit-animation: 
                 fallAndFade 12s forwards, 
                 blinkSevenColors 0.2s infinite step-end;
@@ -39,17 +39,20 @@
         @keyframes fallAndFade {
             0% { opacity: 0; transform: translateY(-50px) scale(1); }
             5% { opacity: 0.9; }
+            90% { opacity: 0.7; }
+            /* MẤT NGAY LẬP TỨC */
             99% { opacity: 0; transform: translateY(100vh) scale(0); }
             100% { opacity: 0; transform: translateY(100vh) scale(0); }
         }
         @-webkit-keyframes fallAndFade {
             0% { opacity: 0; -webkit-transform: translateY(-50px) scale(1); }
             5% { opacity: 0.9; }
+            90% { opacity: 0.7; }
             99% { opacity: 0; -webkit-transform: translateY(100vh) scale(0); }
             100% { opacity: 0; -webkit-transform: translateY(100vh) scale(0); }
         }
 
-        /* Keyframes ĐỔI MÀU NHANH (không cần -webkit- cho text-shadow) */
+        /* Keyframes ĐỔI MÀU NHANH */
         @keyframes blinkSevenColors {
             0%, 14% { text-shadow: 0 0 7px #FF0000, 0 0 10px rgba(255, 0, 0, 0.5); }
             15%, 28% { text-shadow: 0 0 7px #FFA500, 0 0 10px rgba(255, 165, 0, 0.5); }
@@ -101,7 +104,7 @@
         const messages = [
             "Cảm ơn lòng tốt chó đẻ của mày",
             "địt mẹ cảm ơn nha",
-            "Ngáo lồn nx", 
+            "Ngáo lồn nx", /* Đã thêm lại theo yêu cầu */
             "🖕🏻", 
             "🖕🏻🖕🏻", 
             "🖕🏻🖕🏻🖕🏻",
@@ -117,19 +120,16 @@
                 messageElement.classList.add('icon');
             }
             
-            // Random vị trí ngang (lan khắp màn hình)
             const startX = Math.random() * (window.innerWidth - 150); 
             
             messageElement.style.left = startX + 'px';
             messageElement.style.top = '-50px'; 
             
-            // Random delay
             const delay = Math.random() * 3; 
             messageElement.style.animationDelay = delay + 's';
 
             document.body.appendChild(messageElement);
 
-            // Xóa phần tử khỏi DOM sau khi animation kết thúc
             setTimeout(() => {
                 messageElement.remove();
             }, 12000 + (delay * 1000)); 
