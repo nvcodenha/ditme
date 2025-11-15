@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lời Nhắn Lơ Lửng Ít & Né Khung Vĩnh Viễn</title>
+    <title>Lời Nhắn Hồng Nhạt Lơ Lửng & Né Khung Vĩnh Viễn</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -22,9 +22,9 @@
             font-size: 1.2em; 
             font-weight: bold;
             white-space: nowrap;
-            opacity: 1; /* HIỆN NGAY LẬP TỨC */
+            opacity: 1; 
             z-index: 10; 
-            color: #ffffff; 
+            color: #ffffff; /* Màu chữ mặc định (vẫn được đổi màu bằng shadow) */
             
             /* Animation LẮC LƯ NHANH VÀ VĨNH VIỄN */
             animation: 
@@ -35,6 +35,11 @@
                 blinkSevenColors 0.15s infinite step-end;
         }
 
+        /* ĐỔI MÀU CHỮ LƠ LỬNG SANG HỒNG NHẠT */
+        .message {
+            color: #FFC0CB; /* Màu chữ hồng nhạt */
+        }
+        
         /* Keyframes BONG BÓNG LẮC LƯ NHANH */
         @keyframes hoverBubble {
             from { transform: translateY(0px) rotate(1deg); }
@@ -46,6 +51,7 @@
         }
         
         /* Keyframes ĐỔI MÀU CỰC NHANH (0.15s) */
+        /* Giữ nguyên màu shadow để hiệu ứng nhấp nháy 7 màu vẫn có */
         @keyframes blinkSevenColors {
             0%, 14% { text-shadow: 0 0 7px #FF0000, 0 0 10px rgba(255, 0, 0, 0.5); }
             15%, 28% { text-shadow: 0 0 7px #FFA500, 0 0 10px rgba(255, 165, 0, 0.5); }
@@ -69,7 +75,6 @@
         .message.icon {
             text-shadow: 0 0 10px rgba(255, 255, 0, 0.8), 0 0 20px rgba(255, 165, 0, 0.5); 
             color: inherit; 
-            /* Đảm bảo icon cũng có pulseIcon */
             animation: 
                 hoverBubble 4s infinite alternate ease-in-out, 
                 pulseIcon 1s infinite alternate; 
@@ -88,7 +93,8 @@
         }
 
         #main-sticker {
-            width: 350px; height: auto; border-radius: 15px; 
+            width: 250px; /* KHUNG THON LẠI */
+            height: auto; border-radius: 15px; 
             box-shadow: 0 0 20px rgba(255, 0, 85, 0.7); 
             animation: pulseSticker 2s infinite alternate; 
         }
@@ -114,29 +120,26 @@
             "🖕🏻🖕🏻", 
             "🖕🏻🖕🏻🖕🏻",
         ];
-        
-        // Kích thước của khu vực sticker (ĐÃ TÍNH TOÁN)
-        const STICKER_WIDTH = 350;
+
+        // KHUNG THON LẠI
+        const STICKER_WIDTH = 250; 
         const STICKER_HEIGHT = 350; // Ước tính chiều cao
-        
-        function getRandomPosition(element) {
-            const viewportWidth = window.innerWidth;
-            const viewportHeight = window.innerHeight;
+        const MESSAGE_COUNT = 15; // GIẢM SỐ LƯỢNG CHỮ
+
+        function getRandomPosition(element, viewportWidth, viewportHeight) {
             const elementWidth = element.offsetWidth;
             const elementHeight = element.offsetHeight;
             
-            // Tìm tâm của màn hình
             const centerX = viewportWidth / 2;
             const centerY = viewportHeight / 2;
             
             // Khu vực cấm (quanh sticker)
-            const banRadiusX = STICKER_WIDTH / 2 + 50; // Thêm đệm 50px
+            const banRadiusX = STICKER_WIDTH / 2 + 50; 
             const banRadiusY = STICKER_HEIGHT / 2 + 50;
             
             let x, y;
             let tries = 0;
             
-            // Lặp cho đến khi tìm được vị trí nằm ngoài khu vực cấm
             do {
                 // Vị trí ngẫu nhiên
                 x = Math.random() * (viewportWidth - elementWidth);
@@ -146,7 +149,6 @@
                 const distanceX = Math.abs(x + elementWidth / 2 - centerX);
                 const distanceY = Math.abs(y + elementHeight / 2 - centerY);
                 
-                // Nếu vượt quá giới hạn hoặc lặp quá nhiều lần, thoát
                 if (distanceX > banRadiusX || distanceY > banRadiusY || tries > 100) {
                     break; 
                 }
@@ -167,21 +169,32 @@
                 messageElement.classList.add('icon');
             }
             
-            // Thêm vào body trước để có thể đo kích thước (offset)
             document.body.appendChild(messageElement);
             
-            // Lấy vị trí ngẫu nhiên NÉ KHUNG
-            const pos = getRandomPosition(messageElement);
-            
-            messageElement.style.left = pos.x + 'px';
-            messageElement.style.top = pos.y + 'px'; 
-            
-            // Random delay cho chuyển động bong bóng để chúng không đồng bộ
-            messageElement.style.animationDelay = (Math.random() * 2) + 's';
+            return messageElement;
         }
 
-        // Tần suất tạo chữ tổng thể (giảm xuống 200ms để ít chữ hơn)
-        setInterval(createMessage, 200); 
+        function initializeMessages() {
+            const viewportWidth = window.innerWidth;
+            const viewportHeight = window.innerHeight;
+            
+            // TẠO CHỮ SẴN NGAY LẬP TỨC
+            for (let i = 0; i < MESSAGE_COUNT; i++) {
+                const messageElement = createMessage();
+                
+                // Đảm bảo kích thước chữ đã được render trước khi tính toán vị trí
+                const pos = getRandomPosition(messageElement, viewportWidth, viewportHeight);
+                
+                messageElement.style.left = pos.x + 'px';
+                messageElement.style.top = pos.y + 'px'; 
+                
+                // Random delay cho chuyển động bong bóng để chúng không đồng bộ
+                messageElement.style.animationDelay = (Math.random() * 4) + 's';
+            }
+        }
+
+        window.onload = initializeMessages;
+        // Bỏ setInterval để không hiện chữ từng cái một
 
     </script>
 </body>
