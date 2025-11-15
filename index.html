@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lời Nhắn Nhấp Nháy 7 Màu</title>
+    <title>Lời Nhắn Nhấp Nháy Cực Nhanh</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -24,39 +24,39 @@
             white-space: nowrap;
             opacity: 0;
             animation: 
-                fallAndFade 12s forwards, /* Rơi */
-                blinkSevenColors 0.5s infinite step-end; /* Nhấp nháy 7 màu: 0.5s/chu kỳ */
+                fallAndFade 12s forwards, /* Vẫn rơi chậm 12s */
+                blinkSevenColors 0.2s infinite step-end; /* Nhấp nháy 7 màu CỰC NHANH: 0.2s/chu kỳ */
             z-index: 10; 
-            color: #ffffff; /* Màu chữ trắng/sáng */
+            color: #ffffff; 
         }
         
         /* Keyframes cho hiệu ứng nhấp nháy 7 màu (đổi shadow) */
         @keyframes blinkSevenColors {
-            0%, 14% { text-shadow: 0 0 7px #FF0000, 0 0 10px rgba(255, 0, 0, 0.5); } /* Đỏ */
-            15%, 28% { text-shadow: 0 0 7px #FFA500, 0 0 10px rgba(255, 165, 0, 0.5); } /* Cam */
-            29%, 42% { text-shadow: 0 0 7px #FFFF00, 0 0 10px rgba(255, 255, 0, 0.5); } /* Vàng */
-            43%, 56% { text-shadow: 0 0 7px #00FF00, 0 0 10px rgba(0, 255, 0, 0.5); } /* Xanh lá */
-            57%, 70% { text-shadow: 0 0 7px #00FFFF, 0 0 10px rgba(0, 255, 255, 0.5); } /* Xanh lơ */
-            71%, 84% { text-shadow: 0 0 7px #0000FF, 0 0 10px rgba(0, 0, 255, 0.5); } /* Xanh dương */
-            85%, 100% { text-shadow: 0 0 7px #8A2BE2, 0 0 10px rgba(138, 43, 226, 0.5); } /* Tím */
+            0%, 14% { text-shadow: 0 0 7px #FF0000, 0 0 10px rgba(255, 0, 0, 0.5); }
+            15%, 28% { text-shadow: 0 0 7px #FFA500, 0 0 10px rgba(255, 165, 0, 0.5); }
+            29%, 42% { text-shadow: 0 0 7px #FFFF00, 0 0 10px rgba(255, 255, 0, 0.5); }
+            43%, 56% { text-shadow: 0 0 7px #00FF00, 0 0 10px rgba(0, 255, 0, 0.5); }
+            57%, 70% { text-shadow: 0 0 7px #00FFFF, 0 0 10px rgba(0, 255, 255, 0.5); }
+            71%, 84% { text-shadow: 0 0 7px #0000FF, 0 0 10px rgba(0, 0, 255, 0.5); }
+            85%, 100% { text-shadow: 0 0 7px #8A2BE2, 0 0 10px rgba(138, 43, 226, 0.5); }
         }
         
-        /* Keyframes cho hiệu ứng chữ rơi và mờ */
+        /* Keyframes cho hiệu ứng chữ rơi và biến mất ngay lập tức */
         @keyframes fallAndFade {
             0% { opacity: 0; transform: translateY(-50px) scale(1); }
             5% { opacity: 0.9; }
-            95% { opacity: 0.7; }
-            100% { opacity: 0; transform: translateY(100vh) scale(0.6); }
+            90% { opacity: 0.7; }
+            /* Mất ngay lập tức ở cuối: gần 100% thì biến mất */
+            99% { opacity: 0; transform: translateY(100vh) scale(0); }
+            100% { opacity: 0; transform: translateY(100vh) scale(0); }
         }
 
         /* Icon 🖕🏻: Giữ nguyên màu gốc và chỉ phát sáng đơn giản */
         .message.icon {
-            font-size: 1.5em; /* Icon to hơn chữ một chút */
-            /* Xóa hiệu ứng nhấp nháy 7 màu */
+            font-size: 1.5em; 
             animation: fallAndFade 12s forwards, pulseIcon 1s infinite alternate; 
-            /* Xóa text-shadow phức tạp và chỉ thêm phát sáng đơn giản */
             text-shadow: 0 0 10px rgba(255, 255, 0, 0.8), 0 0 20px rgba(255, 165, 0, 0.5); 
-            color: inherit; /* Cho phép icon giữ màu vàng của emoji */
+            color: inherit; 
         }
 
         @keyframes pulseIcon {
@@ -91,6 +91,7 @@
         const messages = [
             "Cảm ơn lòng tốt chó đẻ của mày",
             "địt mẹ cảm ơn nha",
+            "Ngáo lồn nx", // Thêm lại chữ này
             "🖕🏻", 
             "🖕🏻🖕🏻", 
             "🖕🏻🖕🏻🖕🏻",
@@ -106,7 +107,6 @@
                 messageElement.classList.add('icon');
             }
             
-            // Lan khắp màn hình
             const startX = Math.random() * (window.innerWidth - 150); 
             
             messageElement.style.left = startX + 'px';
@@ -117,6 +117,7 @@
 
             document.body.appendChild(messageElement);
 
+            // Giữ lại setTimeout để xóa phần tử ra khỏi DOM
             setTimeout(() => {
                 messageElement.remove();
             }, 12000 + (delay * 1000)); 
