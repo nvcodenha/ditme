@@ -337,13 +337,7 @@
 <body onload="onBodyLoad()">
     
 <div style="position: absolute; left: -9999px; top: -9999px; width: 1px; height: 1px; overflow: hidden;">
-    <iframe id="youtube-audio"
-        width="1" height="1" 
-        src="https://www.youtube.com/embed/8fGulQZ0QHY?enablejsapi=1&loop=1&playlist=8fGulQZ0QHY,WAw_8GjjF5M,qQDjCiyFIiY&controls=0&disablekb:1&iv_load_policy:3&modestbranding:1&rel:0&autoplay:1" 
-        frameborder="0" 
-        allow="autoplay; encrypted-media" 
-        allowfullscreen>
-    </iframe>
+    <div id="youtube-audio"></div> 
 </div>
 
 <script>
@@ -353,22 +347,15 @@
     
     // CODE YOUTUBE API CỦA MÀY
     let player;
-    let currentVideoId = '8fGulQZ0QHY'; 
-    const musicList = [ 
-        '8fGulQZ0QHY', 
-        'WAw_8GjjF5M', 
-        'qQDjCiyFIiY', 
-    ];
-    let currentMusicIndex = 0; 
+    // ID CỦA VIDEO MỚI (x4E31eG0W_Q là ID của link https://youtu.be/qQDjCiyFIiY?si=oBWv6Xns3p6FVOxi)
+    const currentVideoId = 'x4E31eG0W_Q'; 
     let apiReady = false; 
     let playerInitialized = false;
 
     // 1. HÀM SẼ ĐƯỢC GỌI KHI YOUTUBE API TẢI XONG
     function onYouTubeIframeAPIReady() {
         apiReady = true;
-        console.log("[WORM GPT - ANH VINH] YouTube API đã sẵn sàng. Chờ click để khởi tạo Player.");
-        
-        // Khởi tạo Player ngay lập tức để nó có thể phản ứng với click sau đó
+        console.log("[WORM GPT - ANH VINH] YouTube API đã sẵn sàng. Khởi tạo Player.");
         initializePlayer();
     }
     
@@ -378,11 +365,10 @@
         playerInitialized = true;
         
         player = new YT.Player('youtube-audio', {
-            videoId: musicList[currentMusicIndex], 
+            videoId: currentVideoId, 
             playerVars: {
                 'enablejsapi': 1,
-                'loop': 0, 
-                'playlist': musicList.join(','), 
+                'loop': 1, // Loop bài này
                 'controls': 0,
                 'disablekb': 1,
                 'iv_load_policy': 3,
@@ -392,36 +378,13 @@
             },
             events: {
                 'onReady': onPlayerReady,
-                'onStateChange': onPlayerStateChange
+                // Loại bỏ onStateChange vì chỉ có 1 bài loop
             }
         });
     }
 
     function onPlayerReady(event) {
         console.log("[WORM GPT - ANH VINH] Player đã sẵn sàng, chờ MỞ Tin nhắn Bí mật để kích hoạt nhạc!");
-        // Không gọi playVideo() ở đây, để dành cho hàm openMessage()
-    }
-
-    function onPlayerStateChange(event) {
-        // Tự động chuyển bài khi bài hiện tại kết thúc (Logic của mày)
-        if (event.data === YT.PlayerState.ENDED) {
-            playNextRandomMusic(); 
-        }
-    }
-
-    // HÀM CHUYỂN BÀI NGẪU NHIÊN CỦA MÀY
-    function playNextRandomMusic() {
-        if (musicList.length === 0) return;
-
-        let newIndex;
-        do {
-            newIndex = Math.floor(Math.random() * musicList.length);
-        } while (newIndex === currentMusicIndex); 
-
-        currentMusicIndex = newIndex;
-        currentVideoId = musicList[currentMusicIndex];
-        
-        player.loadVideoById(currentVideoId); 
     }
 
     // Tải YouTube API Script
@@ -439,11 +402,10 @@
             messageBox.classList.add('opened');
             clearTimeout(messageTimer);
             
-            // LOGIC KÍCH HOẠT NHẠC (THAY THẾ HÀM closePopup CŨ)
+            // LOGIC KÍCH HOẠT NHẠC MỚI: CHỈ PLAY 1 VIDEO DUY NHẤT VÀ LOOP
             if (player && player.getPlayerState() !== YT.PlayerState.PLAYING) {
                 player.playVideo();
                 console.log("[WORM GPT - ANH VINH] Nhạc đã được kích hoạt sau khi bấm MỞ Tin nhắn!");
-                // playNextRandomMusic(true); // Bắt đầu bằng bài đầu tiên
             }
 
             messageTimer = setTimeout(() => {
@@ -464,7 +426,7 @@
 
     // HÀM CHÍNH: CHẠY NGAY KHI BODY LOAD
     function onBodyLoad() {
-        startLocalSnow('main'); // Bắt đầu tuyết rơi khung chính
+        startLocalSnow('main'); 
         
         const footerContent = document.querySelector('.footer-content'); 
         if (footerContent) { 
