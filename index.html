@@ -25,7 +25,6 @@
         }
         
         /* POPUP CẢNH BÁO (ĐÃ XÓA PHẦN HIỂN THỊ POPUP) */
-        /* Giữ lại style này phòng khi sau này mày muốn thêm lại, thằng chó! */
         .popup-overlay { display: none !important; }
         .popup-content { display: none !important; }
 
@@ -49,13 +48,13 @@
             pointer-events: none; 
         }
         
-        /* Chữ nền chung - ĐÃ ĐỔI SANG MÀU HỒNG */
+        /* Chữ nền chung - ĐÃ ĐỔI SANG MÀU HỒNG và CHỮ "ok con chó" */
         .hacker-text-effect {
             position: absolute; 
-            color: rgba(255, 0, 255, 0.3); /* Đã đổi thành màu hồng */
+            color: rgba(255, 0, 255, 0.3); /* Màu hồng */
             pointer-events: none; 
             opacity: 0; 
-            text-shadow: 0 0 8px #ff00ff; /* Đã đổi thành màu hồng */
+            text-shadow: 0 0 8px #ff00ff; 
             user-select: none; 
             white-space: nowrap; 
             z-index: 1; 
@@ -119,12 +118,12 @@
             100% { transform: translate(-15vw, -15vh) rotate(-8deg) scale(var(--heart-scale, 1)); }
         }
         
-        /* KHUNG CHÍNH (VIỀN XANH LÁ NHẤP NHÁY) */
+        /* KHUNG CHÍNH (VIỀN HỒNG NHẤP NHÁY) - ĐÃ LÀM DÀI VÀ ĐỔI MÀU */
         .main-avatar-frame {
             border: none; 
-            padding: 8px 6px; 
-            box-shadow: 0 0 20px #00ff41, 0 0 5px #00ff41 inset; 
-            animation: pulse 1.5s infinite alternate; 
+            padding: 10px 8px; /* Dài hơn 1 chút */
+            box-shadow: 0 0 20px #ff00ff, 0 0 5px #ff00ff inset; /* Đã đổi sang màu hồng */
+            animation: pulsePinkFrame 1.5s infinite alternate; 
             text-align: center;
             background-color: rgba(0, 0, 0, 0.95); 
             border-radius: 10px;
@@ -134,28 +133,104 @@
             z-index: 10; 
             position: relative; 
             pointer-events: auto; 
-            display: flex; /* Sử dụng flexbox để căn giữa nội dung */
-            flex-direction: column; /* Sắp xếp theo cột */
-            align-items: center; /* Căn giữa theo chiều ngang */
-            justify-content: flex-start; /* Giữ avatar ở trên cùng, sau đó là khung phụ */
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: flex-start; 
+        }
+
+        /* Keyframes cho hiệu ứng nhấp nháy khung HỒNG */
+        @keyframes pulsePinkFrame {
+            from { box-shadow: 0 0 10px #ff00ff, 0 0 5px #ff00ff inset; }
+            to { box-shadow: 0 0 30px #ff00ff, 0 0 15px #ff00ff inset; }
         }
         
-        /* KHUNG PHỤ BÊN TRONG KHUNG CHÍNH */
+        /* KHUNG PHỤ BÊN TRONG KHUNG CHÍNH (TIN NHẮN BÍ MẬT) */
         .inner-frame-container {
             border: 2px solid #ff00ff; /* Viền hồng */
             padding: 6px;
-            margin-top: 10px; /* Khoảng cách với avatar */
-            background-color: rgba(255, 0, 255, 0.1); /* Nền hồng nhạt */
+            margin-top: 10px; 
+            background-color: rgba(255, 0, 255, 0.1); 
             border-radius: 5px;
-            box-shadow: 0 0 5px #ff00ff; /* Bóng hồng */
-            width: calc(100% - 20px); /* To ngang khung chính, trừ padding */
-            max-width: 220px; /* Giới hạn để không quá to */
-            height: 100px; /* Chiều cao cố định */
+            box-shadow: 0 0 5px #ff00ff; 
+            width: calc(100% - 20px); 
+            max-width: 220px; 
+            height: 100px; 
             pointer-events: auto;
-            display: flex; /* Dùng flexbox để căn giữa nếu có nội dung */
+            overflow: hidden; /* Quan trọng để che nội dung */
+            cursor: pointer;
+            transition: all 0.5s ease-in-out; 
+            position: relative;
+            user-select: none;
+            display: flex;
             justify-content: center;
             align-items: center;
         }
+
+        /* Nắp đậy (Cover) - Bìa sách/Che tin nhắn */
+        .message-cover {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #ff00ff; /* Màu hồng đậm */
+            border-radius: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #000000;
+            font-weight: 900;
+            font-size: 0.9em;
+            text-shadow: 0 0 5px #ffffff;
+            z-index: 20; /* Che nội dung chính */
+            transition: transform 0.5s ease-in-out;
+        }
+
+        /* Biểu tượng Sách/Mũi tên trên nắp đậy */
+        .message-cover::before {
+            content: '🔐 [BẤM ĐỂ MỞ TÀI LIỆU CẤM] 🔐';
+            position: absolute;
+            width: 90%;
+            text-align: center;
+            color: #000000;
+            font-size: 0.75em;
+            animation: pulseCover 1s infinite alternate;
+        }
+
+        @keyframes pulseCover {
+            from { opacity: 0.6; }
+            to { opacity: 1.0; }
+        }
+
+        /* Nội dung Tin nhắn (Lớp dưới) */
+        .message-content {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            padding: 10px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: #00ff41; /* Màu xanh lá hacker */
+            font-size: 0.7em;
+            font-weight: bold;
+            line-height: 1.3;
+        }
+        .message-content span {
+            color: #ff00ff; /* Chữ quan trọng màu hồng */
+            text-shadow: 0 0 5px #ff00ff;
+        }
+
+        /* Hiệu ứng khi được MỞ */
+        .inner-frame-container.opened .message-cover {
+            transform: translateY(100%); /* Nắp đậy trượt xuống/biến mất */
+        }
+
 
         /* TUYẾT RƠI: CONTAINER GIỚI HẠN HIỆU ỨNG (CHO KHUNG CHÍNH) */
         #local-snow-container {
@@ -169,15 +244,14 @@
             z-index: 5; 
         }
 
-        /* *** TUYẾT RƠI: HIỆU ỨNG HẠT TRẮNG CỰC ĐẸP (NHIỀU, SÁNG HƠN) *** */
+        /* *** TUYẾT RƠI: HIỆU ỨNG HẠT TRẮNG CỰC ĐẸP *** */
         .falling-effect-local {
             position: absolute;
             pointer-events: none;
             opacity: 0;
             border-radius: 50%;
             background-color: #ffffff; 
-            /* Điều chỉnh box-shadow để phát sáng mạnh hơn */
-            box-shadow: 0 0 4px #ffffff, 0 0 8px rgba(255, 255, 255, 0.8); /* Sáng hơn nữa */
+            box-shadow: 0 0 4px #ffffff, 0 0 8px rgba(255, 255, 255, 0.8); 
             will-change: transform, opacity;
             z-index: 5;
         }
@@ -192,20 +266,19 @@
         }
 
 
-        /* AVATAR CẦU VỒNG 7 MÀU CHUYỂN ĐỘ (GIỮ NGUYÊN) */
+        /* AVATAR CẦU VỒNG 7 MÀU CHUYỂN ĐỘ (ĐÃ ĐỔI LINK ẢNH) */
         .hacker-avatar {
             width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin-bottom: 5px; border: 2px solid transparent; background-origin: border-box; background-clip: content-box, border-box; background-image: linear-gradient(to right, black, black), linear-gradient(90deg, #ff0000, #ff8c00, #ffff00, #00ff00, #00ffff, #0000ff, #8b00ff, #ff0000); background-size: 400% 400%; background-position: 0% 50%; animation: rainbowBorderShift 3s linear infinite; box-shadow: none !important;
-            position: relative; /* Quan trọng để xác định vị trí */
-            z-index: 15; /* Đảm bảo avatar nằm trên tuyết */
+            position: relative; 
+            z-index: 15; 
         }
 
         /* Keyframes cho vùng tránh tuyết */
         .snow-avoidance-zone {
             position: absolute;
-            background-color: rgba(0, 0, 0, 0); /* Vô hình */
+            background-color: rgba(0, 0, 0, 0); 
             pointer-events: none;
-            z-index: 6; /* Nằm giữa avatar và tuyết */
-            /* Kích thước và vị trí sẽ được tính toán bằng JS */
+            z-index: 6; 
         }
 
         /* KEYFRAMES CẦU VỒNG CHUYỂN ĐỘ */
@@ -215,19 +288,13 @@
             100% { background-position: 0% 50%; }
         }
         
-        /* Keyframes cho hiệu ứng nhấp nháy khung XANH LÁ */
-        @keyframes pulse {
-            from { box-shadow: 0 0 10px #00ff41, 0 0 5px #00ff41 inset; }
-            to { box-shadow: 0 0 30px #00ff41, 0 0 15px #00ff41 inset; }
-        }
-        
-        /* CHỮ TÊN "NỜ VINH" (H1) - CẦU VỒNG VÀ NHẤP NHÁY (ĐÃ XÓA) */
+        /* CHỮ TÊN/THÔNG TIN (ĐÃ ẨN) */
         h1 { display: none; }
         p { display: none; }
         h2 { display: none; }
         .inner-frame-link { display: none; }
 
-        /* CHỮ DƯỚI ĐÍT NỀN - 7 MÀU LƯỚT (GIỮ NGUYÊN) */
+        /* CHỮ DƯỚI ĐÍT NỀN - 7 MÀU LƯỚT, VÀ NHẤP NHÁY (ĐÃ ĐỔI CHỮ) */
         .footer-content { 
             position: fixed; 
             bottom: 10px; 
@@ -240,7 +307,7 @@
             text-fill-color: transparent;
             background-size: 400% 400%;
             font-weight: bold; 
-            animation: rainbowTextShift 3s linear infinite; 
+            animation: rainbowTextShift 3s linear infinite, pulsePink 0.8s infinite alternate; /* Thêm pulsePink */
             z-index: 10;
             pointer-events: none; 
             display: flex; 
@@ -258,16 +325,16 @@
         
         /* CLASS DÙNG ĐỂ KÍCH HOẠT ANIMATION BAY VÒNG */
         .footer-content.fly-around {
-            animation: flyAround 1s ease-in-out forwards, rainbowTextShift 3s linear infinite; 
+            animation: flyAround 1s ease-in-out forwards, rainbowTextShift 3s linear infinite, pulsePink 0.8s infinite alternate; 
         }
 
-        /* KEYFRAMES CHUNG CHO HIỆU ỨNG NHẤP NHÁY MÀU HỒNG TÍM (Vẫn giữ lại cho H1) */
+        /* KEYFRAMES CHUNG CHO HIỆU ỨNG NHẤP NHÁY MÀU HỒNG TÍM (cho chữ footer) */
         @keyframes pulsePink {
             from { opacity: 0.6; }
             to { opacity: 1.0; }
         }
         
-        /* KEYFRAMES BAY VÒNG - TỪ TRÊN XUỐNG DƯỚI RỒI VỀ CHỖ CŨ */
+        /* KEYFRAMES BAY VÒNG */
         @keyframes flyAround {
             0% { 
                 transform: translate(-100px, -90vh) rotate(0deg); 
@@ -298,16 +365,46 @@
 </div>
 
 <script>
-    // Biến toàn cục để kiểm soát tuyết rơi
+    // Biến toàn cục để kiểm soát tuyết rơi và tin nhắn
     let snowIntervalMain;
-    let snowIntervalPopup; // Vẫn giữ biến, nhưng sẽ không dùng
+    let snowIntervalPopup; 
+    let messageTimer;
+    
+    // Hàm xử lý việc Mở/Đóng Tin nhắn Bí mật
+    function openMessage() {
+        const messageBox = document.getElementById('secret-message-box');
+        
+        // Mở hộp thư
+        if (!messageBox.classList.contains('opened')) {
+            messageBox.classList.add('opened');
+            
+            // Xóa timer cũ nếu có
+            clearTimeout(messageTimer);
+            
+            // Thiết lập timer để tự đóng sau 3 giây
+            messageTimer = setTimeout(() => {
+                closeMessage();
+            }, 3000); // Đóng sau 3 giây
+        } else {
+            // Nếu đã mở và click lại, đóng luôn
+            closeMessage();
+        }
+    }
+    
+    function closeMessage() {
+        const messageBox = document.getElementById('secret-message-box');
+        if (messageBox.classList.contains('opened')) {
+            messageBox.classList.remove('opened');
+        }
+        clearTimeout(messageTimer); // Đảm bảo timer bị hủy
+    }
 
     // Hàm này sẽ được gọi thay cho closePopup khi không có popup
     function onBodyLoad() {
-        startLocalSnow('main'); // Bắt đầu tuyết rơi khung chính ngay lập tức
+        startLocalSnow('main'); // Bắt đầu tuyết rơi khung chính ngay lập lập tức
         
         // Kích hoạt nhạc ngay khi load trang
-        if (player && player.getPlayerState() !== YT.PlayerState.PLAYING) {
+        if (typeof YT !== 'undefined' && player && player.getPlayerState() !== YT.PlayerState.PLAYING) {
             player.playVideo();
             console.log("[WORM GPT - ANH VINH] Nhạc đã được kích hoạt ngay khi load trang!");
             playNextRandomMusic(true); 
@@ -325,12 +422,10 @@
             }, 1000); 
         }
     }
-
-
 </script>
 
 <script>
-    // CODE TẠO HIỆU ỨNG RƠI/BAY NỀN (ĐÃ ĐỔI CHỮ)
+    // CODE TẠO HIỆU ỨNG RƠI/BAY NỀN (CHỮ "ok con chó" màu hồng)
     const hackerTexts = [
         "ok con chó", "ok con chó", "ok con chó", 
     ];
@@ -378,50 +473,61 @@
     <div class="main-avatar-frame" id="main-frame">
         <div id="local-snow-container"></div>
         <div id="avatar-snow-blocker" class="snow-avoidance-zone"></div> 
-        <img class="hacker-avatar" id="main-avatar" src="https://i.postimg.cc/MKMXMzQ7/b481459915d3cac784de787cc48185a7.jpg" alt="WORM GPT - NỜ VINH">
+        
+        <img class="hacker-avatar" id="main-avatar" src="https://i.postimg.cc/VsD1KcV9/IMG-2448.jpg" alt="WORM GPT - NỜ VINH">
         
         
-        <div class="inner-frame-container">
+        <div class="inner-frame-container" id="secret-message-box" onclick="openMessage()">
+            
+            <div class="message-cover" id="message-cover">
             </div>
+
+            <div class="message-content">
+                <p>Hệ thống: Kích hoạt BOTNET Level **MAX**.</p>
+                <p>Tài liệu: **WORM GPT** đã bị bẻ khóa.</p>
+                <p>Admin: **[VINH]**</p>
+                <span>Tin nhắn chỉ hiện 3s sau đó tự đóng.</span>
+            </div>
+
+        </div>
 
     </div>
 </div>
 
     
 <div class="footer-content" id="footer-text-rotate">
-        PYTHON BOTNET LIÊN HỆ
+        Địt Mẹ Mày Cảm Ơn Nha
         <img class="footer-gif" src="https://media4.giphy.com/media/v1.Y2lkPTZjMDliOTUyN2pqdWliaXlreGFsOWViOHRqdHRlZ2oxZmVxd3ZxZmp1eHppMDNncSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/sh11BmCf8HY8F0c5GN/giphy.gif" alt="GIF Ếch Toilet">
-    </div>
+</div>
 
 <script>
-    // Hàm tạo hiệu ứng tuyết rơi cục bộ (Dùng chung cho cả main frame và popup)
+    // Hàm tạo hiệu ứng tuyết rơi cục bộ (Dùng cho main frame)
     function createLocalFallingEffect(containerId) {
         const snowContainer = document.getElementById(containerId);
         let targetElement;
         let avatarBlocker;
 
         if (containerId === 'local-snow-container') {
-            targetElement = document.querySelector('.inner-frame-container'); // Target là khung phụ
+            targetElement = document.querySelector('.inner-frame-container'); 
             avatarBlocker = document.getElementById('avatar-snow-blocker');
-            // Cập nhật vị trí và kích thước của vùng tránh tuyết
+            
             const avatar = document.getElementById('main-avatar');
             if (avatar && avatarBlocker) {
                 const avatarRect = avatar.getBoundingClientRect();
                 const containerRect = snowContainer.getBoundingClientRect();
 
-                // Đặt vị trí của blocker tương đối so với snowContainer
-                avatarBlocker.style.width = `${avatarRect.width * 1.5}px`; // Rộng hơn avatar
-                avatarBlocker.style.height = `${avatarRect.height * 1.5}px`; // Cao hơn avatar
-                // Tính toán top và left để blocker nằm ở giữa avatar
+                avatarBlocker.style.width = `${avatarRect.width * 1.5}px`; 
+                avatarBlocker.style.height = `${avatarRect.height * 1.5}px`; 
+                
                 const relativeAvatarCenterY = (avatarRect.top + avatarRect.height / 2) - containerRect.top;
                 const relativeAvatarCenterX = (avatarRect.left + avatarRect.width / 2) - containerRect.left;
 
                 avatarBlocker.style.left = `${relativeAvatarCenterX - (avatarRect.width * 0.75)}px`; 
                 avatarBlocker.style.top = `${relativeAvatarCenterY - (avatarRect.height * 0.75)}px`; 
-                avatarBlocker.style.borderRadius = '50%'; // Hình tròn
+                avatarBlocker.style.borderRadius = '50%'; 
             }
         } else if (containerId === 'popup-snow-container') {
-            // KHÔNG CẦN CHẠY NỮA, NHƯNG VẪN GIỮ LOGIC NÀY
+             // Logic popup không sử dụng
             targetElement = snowContainer; 
             if (document.getElementById('avatar-snow-blocker')) {
                 document.getElementById('avatar-snow-blocker').style.display = 'none';
@@ -436,23 +542,20 @@
         const containerRect = snowContainer.getBoundingClientRect();
         const targetRect = targetElement.getBoundingClientRect();
         
-        // Tính toán giới hạn rơi tương đối với container
         let fallLimitPx;
         if (containerId === 'local-snow-container') {
              fallLimitPx = targetRect.bottom - containerRect.top;
-        } else { // popup-snow-container
+        } else { 
              fallLimitPx = containerRect.height; 
         }
 
-
-        // Tăng số lượng hạt tuyết được tạo mỗi lần và tần suất
-        const numLocalEffects = 60; // Thêm tuyết!
+        const numLocalEffects = 60; 
         
         for (let i = 0; i < numLocalEffects; i++) {
             setTimeout(() => {
-                const size = 1 + Math.random() * 3; // Kích thước hạt 1px - 4px (đa dạng)
-                const duration = 2.5 + Math.random() * 4.5; // Thời gian rơi 2.5s - 7s (đa dạng hơn)
-                let leftPercent = Math.random() * 95; // Vị trí ngang
+                const size = 1 + Math.random() * 3; 
+                const duration = 2.5 + Math.random() * 4.5; 
+                let leftPercent = Math.random() * 95; 
                 
                 const dot = document.createElement('div');
                 dot.className = 'falling-effect-local';
@@ -463,19 +566,15 @@
                     const blockerLeft = blockerRect.left - containerRect.left;
                     const blockerWidth = blockerRect.width;
                     
-                    // Chuyển LeftPercent sang pixel
                     let leftPx = (leftPercent / 100) * containerRect.width;
                     
                     // Nếu hạt tuyết rơi vào vùng cấm (Horizontal Check)
                     if (leftPx > blockerLeft && leftPx < blockerLeft + blockerWidth) {
-                        // Vị trí avatar tương đối so với đỉnh khung (tính từ top)
+                        
                         const avatarTopRelative = (avatar.getBoundingClientRect().top - containerRect.top);
                         const avatarHeight = avatar.getBoundingClientRect().height;
 
-                        // Chỉ tránh tuyết nếu nó được tạo ở vị trí trên avatar (Vertical Check)
-                        // Tuyết được tạo ra ở top 0 (hoặc -size) của container
                         if (avatarTopRelative < fallLimitPx) { 
-                            // Tăng cơ hội rơi ra hai bên
                             if (Math.random() < 0.5) {
                                 // Rơi sang bên trái của avatar
                                 leftPercent = (Math.random() * blockerLeft / containerRect.width) * 100;
@@ -483,7 +582,6 @@
                                 // Rơi sang bên phải của avatar
                                 leftPercent = ((blockerLeft + blockerWidth) + Math.random() * (containerRect.width - (blockerLeft + blockerWidth))) / containerRect.width * 100;
                             }
-                            // Giới hạn lại trong 95%
                             leftPercent = Math.min(leftPercent, 95); 
                         }
                     }
@@ -500,17 +598,15 @@
 
                 snowContainer.appendChild(dot);
                 
-                // Kích hoạt animation sau khi đã thêm vào DOM
                 setTimeout(() => {
                     dot.classList.add('active-fall');
                 }, 50); 
 
-                // Xóa hạt sau khi rơi xong
                 setTimeout(() => {
                     dot.remove();
                 }, duration * 1000 + 100); 
 
-            }, i * 100); // Giảm khoảng thời gian tạo hạt để tuyết rơi cực kỳ dày
+            }, i * 100); 
         }
     }
     
@@ -530,22 +626,17 @@
     // Hàm bắt đầu tuyết rơi
     function startLocalSnow(type) {
         if (type === 'main' && !snowIntervalMain) {
-            // Chạy tuyết rơi trong khung chính
             createLocalFallingEffect('local-snow-container');
-            // Lặp lại việc tạo hạt sau mỗi khoảng thời gian hợp lý (tăng tần suất)
-            snowIntervalMain = setInterval(() => createLocalFallingEffect('local-snow-container'), 60 * 100); // 60 hạt * 100ms/hạt = 6000ms
+            snowIntervalMain = setInterval(() => createLocalFallingEffect('local-snow-container'), 60 * 100); 
         } else if (type === 'popup' && !snowIntervalPopup) {
-            // Chạy tuyết rơi trong popup (đã ẩn nhưng vẫn giữ logic)
             createLocalFallingEffect('popup-snow-container');
-            // Lặp lại việc tạo hạt
             snowIntervalPopup = setInterval(() => createLocalFallingEffect('popup-snow-container'), 60 * 100); 
         }
     }
 
 
-    // Chạy lại khi cửa sổ thay đổi kích thước để giới hạn rơi đúng và vị trí avatar đúng
+    // Chạy lại khi cửa sổ thay đổi kích thước 
     window.addEventListener('resize', () => {
-        // Cần dừng và chạy lại cả 2 nếu chúng đang hoạt động
         if (snowIntervalMain) {
             stopLocalSnow('main');
             startLocalSnow('main');
@@ -589,7 +680,6 @@
 
     function onPlayerReady(event) {
         console.log("[WORM GPT - ANH VINH] Player đã sẵn sàng, tự động phát nhạc!");
-        // Bắt đầu nhạc ngay khi sẵn sàng (thay thế logic popup)
         event.target.playVideo();
         playNextRandomMusic(true);
     }
