@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lời Nhắn Lơ Lửng & Rơi Chuyển Hóa Vĩnh Viễn</title>
+    <title>Lời Nhắn Rơi Chuyển Hóa Thành Lơ Lửng Vĩnh Viễn</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -117,33 +117,24 @@
     </div>
 
     <script>
-        // Danh sách chữ LƠ LỬNG (Chủ yếu là chữ dài)
-        const floatingMessages = [
-            "Cảm ơn lòng tốt chó đẻ của mày",
-            "địt mẹ cảm ơn nha",
-            "🖕🏻", 
-            "🖕🏻🖕🏻", 
-            "🖕🏻🖕🏻🖕🏻",
-        ]; 
-        
         // Danh sách chữ RƠI (CHỈ CÓ CẢM ƠN VÀ 🖕🏻)
-        const fallingMessages = [
+        const messages = [
             "địt mẹ cảm ơn nha", 
             "🖕🏻"
         ];
 
         const STICKER_WIDTH = 250; 
         const STICKER_HEIGHT = 350; 
-        const MESSAGE_FLOATING_COUNT = 15; // 15 chữ lơ lửng xếp sẵn
 
+        // Giờ đây, hàm này chỉ dùng cho mục đích NÉ KHUNG, chứ không tạo ra chữ ban đầu nữa
         function getRandomPosition(element, viewportWidth, viewportHeight) {
+            // ... (Hàm này vẫn giữ nguyên để đảm bảo chữ không lơ lửng bên trong khung)
             const elementWidth = element.offsetWidth;
             const elementHeight = element.offsetHeight;
             
             const centerX = viewportWidth / 2;
             const centerY = viewportHeight / 2;
             
-            // Khu vực cấm (quanh sticker)
             const banRadiusX = STICKER_WIDTH / 2 + 20; 
             const banRadiusY = STICKER_HEIGHT / 2 + 20;
             
@@ -167,85 +158,88 @@
             return { x, y };
         }
         
-        function createMessage(isFloating = true) {
+        // HÀM TẠO CHỮ (TẤT CẢ ĐỀU LÀ CHỮ RƠI)
+        function createMessage() {
             
-            let text;
-            if (isFloating) {
-                text = floatingMessages[Math.floor(Math.random() * floatingMessages.length)];
-            } else {
-                // Chữ rơi chỉ lấy từ danh sách giới hạn
-                text = fallingMessages[Math.floor(Math.random() * fallingMessages.length)];
-            }
+            // Chữ rơi chỉ lấy từ danh sách giới hạn
+            const text = messages[Math.floor(Math.random() * messages.length)];
 
             const messageElement = document.createElement('div');
             messageElement.classList.add('message');
             messageElement.textContent = text;
             
-            // Icon vẫn là Icon
             if (text.includes('🖕🏻')) {
                 messageElement.classList.add('icon');
             }
             
             document.body.appendChild(messageElement);
             
-            if (isFloating) {
-                // LOGIC CHỮ LƠ LỬNG BAN ĐẦU
+            // Bắt đầu là LOGIC CHỮ RƠI
+            messageElement.classList.add('fall');
+            
+            const startX = Math.random() * (window.innerWidth - 150); 
+            messageElement.style.left = startX + 'px';
+            messageElement.style.top = '-50px'; 
+            
+            const delay = Math.random() * 0.5; 
+            messageElement.style.animationDelay = delay + 's';
+
+            // CHUYỂN TỪ RƠI SANG LƠ LỬNG KHI CHẠM ĐÁY (ĐÉO BIẾN MẤT)
+            const animationDuration = 10000; // 10s
+            const totalTime = animationDuration + (delay * 1000); 
+            
+            setTimeout(() => {
+                // 1. Tắt animation (dừng chuyển động rơi)
+                messageElement.style.animation = 'none';
+                messageElement.style.webkitAnimation = 'none';
+
+                // 2. Set vị trí cố định (Đáy màn hình - chiều cao chữ)
+                const finalTop = window.innerHeight - messageElement.offsetHeight; 
+                
+                // Vị trí X MỚI: Tính toán lại vị trí X để NÉ KHUNG trước khi trở thành LƠ LỬNG
+                const viewportWidth = window.innerWidth;
+                const viewportHeight = window.innerHeight;
+                
+                const currentPos = messageElement.getBoundingClientRect();
+                let newX = currentPos.left;
+                
+                const centerX = viewportWidth / 2;
+                const banRadiusX = STICKER_WIDTH / 2 + 20;
+                
+                // Nếu chữ rơi vào gần khu vực cấm (theo trục X)
+                if (Math.abs(currentPos.left + messageElement.offsetWidth / 2 - centerX) < banRadiusX) {
+                    // Đẩy nó sang trái hoặc phải của khung
+                    if (currentPos.left < centerX) {
+                        newX = centerX - banRadiusX - messageElement.offsetWidth; // Đẩy sang trái
+                    } else {
+                        newX = centerX + banRadiusX; // Đẩy sang phải
+                    }
+                    // Đảm bảo không vượt quá biên màn hình
+                    newX = Math.min(Math.max(0, newX), viewportWidth - messageElement.offsetWidth);
+                }
+                
+                messageElement.style.left = newX + 'px';
+                messageElement.style.top = finalTop + 'px'; 
+                
+                // 3. Chuyển sang Lơ Lửng
+                messageElement.classList.remove('fall');
                 messageElement.classList.add('floating');
                 
-                const pos = getRandomPosition(messageElement, window.innerWidth, window.innerHeight);
-                messageElement.style.left = pos.x + 'px';
-                messageElement.style.top = pos.y + 'px'; 
-                
+                // Phải set lại animation delay ngẫu nhiên cho hoverBubble
                 messageElement.style.animationDelay = (Math.random() * 4) + 's';
-                
-            } else {
-                // LOGIC CHỮ RƠI
-                messageElement.classList.add('fall');
-                
-                const startX = Math.random() * (window.innerWidth - 150); 
-                messageElement.style.left = startX + 'px';
-                messageElement.style.top = '-50px'; 
-                
-                const delay = Math.random() * 0.5; 
-                messageElement.style.animationDelay = delay + 's';
 
-                // CHUYỂN TỪ RƠI SANG LƠ LỬNG KHI CHẠM ĐÁY
-                const animationDuration = 10000; // 10s
-                const totalTime = animationDuration + (delay * 1000); 
-                
-                setTimeout(() => {
-                    // 1. Tắt animation (dừng chuyển động rơi)
-                    messageElement.style.animation = 'none';
-                    messageElement.style.webkitAnimation = 'none';
-
-                    // 2. Set vị trí cố định (Đáy màn hình - chiều cao chữ)
-                    const finalTop = window.innerHeight - messageElement.offsetHeight; 
-                    messageElement.style.top = finalTop + 'px'; 
-                    // Giữ nguyên vị trí X
-                    
-                    // 3. Chuyển sang Lơ Lửng
-                    messageElement.classList.remove('fall');
-                    messageElement.classList.add('floating');
-                    
-                    // Phải set lại animation delay ngẫu nhiên cho hoverBubble
-                    messageElement.style.animationDelay = (Math.random() * 4) + 's';
-
-                }, totalTime - 50); // Convert 50ms trước khi animation kết thúc và biến mất
-            }
+            }, totalTime - 50); // Giật lại 50ms trước khi animation rơi kết thúc
             
             return messageElement;
         }
 
-        // TẠO CHỮ SẴN (LƠ LỬNG VĨNH VIỄN) VÀ KHỞI TẠO CHỮ RƠI
-        window.onload = () => {
-             // 1. Chữ Lơ Lửng xếp sẵn
-             for (let i = 0; i < MESSAGE_FLOATING_COUNT; i++) {
-                createMessage(true); 
-             }
-             
-             // 2. Chữ Rơi (sinh ra đều đặn 250ms)
-             setInterval(() => createMessage(false), 250); 
-        };
+        function startFallingMessages() {
+            // TẠO CHỮ RƠI MỖI 250ms (Chữ RƠI là nguồn duy nhất)
+            setInterval(createMessage, 250); 
+        }
+
+        // CHỈ CÓ CHỮ RƠI (VÀ SAU ĐÓ LÀ LƠ LỬNG) ĐƯỢC GỌI
+        window.onload = startFallingMessages;
 
     </script>
 </body>
