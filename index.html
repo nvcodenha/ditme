@@ -25,11 +25,9 @@
             opacity: 1; 
             z-index: 10; 
             color: #FFC0CB; /* Màu hồng nhạt */
-            
-            /* Dùng chung cho chữ rơi (opacity sẽ được chỉnh lại trong Keyframes) */
         }
         
-        /* Chữ RƠI (Chậm lại, 10s) */
+        /* Chữ RƠI (Chậm, 10s) */
         .message.fall {
              opacity: 0; /* Khởi đầu ẩn cho chữ rơi */
              animation: 
@@ -40,14 +38,14 @@
                 blinkSevenColors 0.15s infinite step-end;
         }
 
-        /* Chữ LƠ LỬNG (Vĩnh viễn) */
+        /* Chữ LƠ LỬNG (Vĩnh viễn & NHANH HƠN: 3s) */
         .message.floating {
             opacity: 1; /* Hiện ngay lập tức */
             animation: 
-                hoverBubble 4s infinite alternate ease-in-out, 
+                hoverBubble 3s infinite alternate ease-in-out, /* NHANH HƠN */
                 blinkSevenColors 0.15s infinite step-end; 
             -webkit-animation: 
-                hoverBubble 4s infinite alternate ease-in-out, 
+                hoverBubble 3s infinite alternate ease-in-out, 
                 blinkSevenColors 0.15s infinite step-end;
         }
 
@@ -100,13 +98,13 @@
             text-shadow: 0 0 10px rgba(255, 255, 0, 0.8), 0 0 20px rgba(255, 165, 0, 0.5); 
             color: inherit; 
         }
-        /* Icon Lơ Lửng */
+        /* Icon Lơ Lửng (NHANH HƠN) */
         .message.icon.floating {
             animation: 
-                hoverBubble 4s infinite alternate ease-in-out, 
+                hoverBubble 3s infinite alternate ease-in-out, 
                 pulseIcon 1s infinite alternate; 
             -webkit-animation: 
-                hoverBubble 4s infinite alternate ease-in-out, 
+                hoverBubble 3s infinite alternate ease-in-out, 
                 pulseIcon 1s infinite alternate;
         }
         /* Icon Rơi */
@@ -159,7 +157,7 @@
 
         const STICKER_WIDTH = 250; 
         const STICKER_HEIGHT = 350; 
-        const MESSAGE_FLOATING_COUNT = 10; // 10 chữ lơ lửng xếp sẵn
+        const MESSAGE_FLOATING_COUNT = 15; // 15 chữ lơ lửng xếp sẵn
 
         function getRandomPosition(element, viewportWidth, viewportHeight) {
             const elementWidth = element.offsetWidth;
@@ -243,15 +241,15 @@
         
         // 2. TẠO CHỮ RƠI ĐỀU ĐẶN SAU KHI WEB LOAD
         function startFallingMessages() {
-            // TẠO CHỮ RƠI MỖI 250ms (Tần suất vừa phải để không bị dính cục)
+            // TẠO CHỮ RƠI MỖI 250ms 
             setInterval(() => createMessage(false), 250);
         }
 
 
         window.onload = () => {
              initializeFloatingMessages();
-             // Thêm một độ trễ nhỏ để chữ lơ lửng ổn định trước khi chữ rơi bắt đầu
-             setTimeout(startFallingMessages, 1000); 
+             // CHỮ RƠI HIỆN NGAY LẬP TỨC
+             startFallingMessages(); 
         };
 
     </script>
