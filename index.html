@@ -59,7 +59,7 @@
             will-change: transform, opacity; 
         }
 
-        /* TRÁI TIM ĐỎ PHÁT SÁNG (VẼ BẰNG CSS) - ĐÃ SỬA MÀU */
+        /* TRÁI TIM ĐỎ PHÁT SÁNG (VẼ BẰNG CSS) */
         .hacker-heart-effect {
             position: absolute;
             background-color: #ff0000; /* ĐÃ ĐỔI SANG ĐỎ */
@@ -116,11 +116,11 @@
             100% { transform: translate(-15vw, -15vh) rotate(-8deg) scale(var(--heart-scale, 1)); }
         }
         
-        /* KHUNG CHÍNH (VIỀN HỒNG NHẤP NHÁY) - ĐÃ LÀM DÀI VÀ ĐỔI MÀU */
+        /* KHUNG CHÍNH (VIỀN HỒNG NHẤP NHÁY) */
         .main-avatar-frame {
             border: none; 
-            padding: 10px 8px; /* Dài hơn 1 chút */
-            box-shadow: 0 0 20px #ff00ff, 0 0 5px #ff00ff inset; /* Đã đổi sang màu hồng */
+            padding: 10px 8px; 
+            box-shadow: 0 0 20px #ff00ff, 0 0 5px #ff00ff inset; /* Màu hồng */
             animation: pulsePinkFrame 1.5s infinite alternate; 
             text-align: center;
             background-color: rgba(0, 0, 0, 0.95); 
@@ -165,7 +165,7 @@
             align-items: center;
         }
 
-        /* Nắp đậy (Cover) - Bìa sách/Che tin nhắn - ĐÃ SỬA MÀU HỒNG NHẠT */
+        /* Nắp đậy (Cover) - Bìa sách/Che tin nhắn - MÀU HỒNG NHẠT */
         .message-cover {
             position: absolute;
             top: 0;
@@ -286,13 +286,7 @@
             100% { background-position: 0% 50%; }
         }
         
-        /* CHỮ TÊN/THÔNG TIN (ĐÃ ẨN) */
-        h1 { display: none; }
-        p { display: none; }
-        h2 { display: none; }
-        .inner-frame-link { display: none; }
-
-        /* CHỮ DƯỚI ĐÍT NỀN - 7 MÀU LƯỚT, VÀ NHẤP NHÁY (ĐÃ ĐỔI CHỮ) */
+        /* CHỮ DƯỚI ĐÍT NỀN - 7 MÀU LƯỚT, VÀ NHẤP NHÁY */
         .footer-content { 
             position: fixed; 
             bottom: 10px; 
@@ -379,10 +373,10 @@
             // Xóa timer cũ nếu có
             clearTimeout(messageTimer);
             
-            // Thiết lập timer để tự đóng sau 3 giây
+            // Thiết lập timer để tự đóng sau 10 giây
             messageTimer = setTimeout(() => {
                 closeMessage();
-            }, 3000); // Đóng sau 3 giây
+            }, 10000); 
         } else {
             // Nếu đã mở và click lại, đóng luôn
             closeMessage();
@@ -399,14 +393,7 @@
 
     // Hàm này sẽ được gọi thay cho closePopup khi không có popup
     function onBodyLoad() {
-        startLocalSnow('main'); // Bắt đầu tuyết rơi khung chính ngay lập lập tức
-        
-        // Kích hoạt nhạc ngay khi load trang
-        if (typeof YT !== 'undefined' && player && player.getPlayerState() !== YT.PlayerState.PLAYING) {
-            player.playVideo();
-            console.log("[WORM GPT - ANH VINH] Nhạc đã được kích hoạt ngay khi load trang!");
-            playNextRandomMusic(true); 
-        }
+        startLocalSnow('main'); // Bắt đầu tuyết rơi khung chính ngay lập tức
         
         // Kích hoạt animation footer bay vòng 
         const footerContent = document.querySelector('.footer-content'); 
@@ -415,9 +402,15 @@
             void footerContent.offsetWidth; 
             footerContent.classList.add('fly-around'); 
             
+            // CHẠY NHẠC SAU KHI HOẠT ẢNH QUAY HOÀN TẤT (1 GIÂY)
             setTimeout(() => {
                 footerContent.classList.remove('fly-around');
-            }, 1000); 
+                // Kích hoạt nhạc sau khi hoạt ảnh quay xong
+                if (typeof YT !== 'undefined' && player && player.getPlayerState() !== YT.PlayerState.PLAYING) {
+                    player.playVideo();
+                    console.log("[WORM GPT - ANH VINH] Nhạc đã được kích hoạt sau khi hoạt ảnh quay xong!");
+                }
+            }, 1000); // 1000ms = 1 giây (độ dài của animation flyAround)
         }
     }
 </script>
@@ -481,10 +474,8 @@
             </div>
 
             <div class="message-content">
-                <p>Cảm ơn tấm lòng tốt , chó đẻ của mày</p>
-                <p style="margin-top: 5px;">By <span>Quốc Tấn</span></p>
-                <span style="font-size: 0.6em; margin-top: 5px;">Tin nhắn chỉ hiện 3s sau đó tự đóng.</span>
-            </div>
+                <p>Cảm ơn lòng tốt chó đẻ của mày</p> <p style="margin-top: 5px;">By <span>Quốc Tấn</span></p>
+                <span style="font-size: 0.6em; margin-top: 5px;">Tin nhắn chỉ hiện 10s sau đó tự đóng.</span> </div>
 
         </div>
 
@@ -644,13 +635,13 @@
         }
     });
     
-    // CODE YOUTUBE API (ĐÃ SỬA: CHẠY NHẠC TỪ ID VIDEO '2' NGAY LẬP TỨC)
+    // CODE YOUTUBE API (ĐÃ CHẮC CHẮN LÀ ID VIDEO '4' VÀ CHẠY SAU KHI ANIMATION KẾT THÚC)
     let player;
-    let currentVideoId = '2'; // ĐÃ ĐỔI THÀNH '2'
+    let currentVideoId = '4'; // ĐÃ CHẮC CHẮN LÀ '4'
     const musicList = [ 
-        '2', // Link Mới (Mở đầu)
-        'WAw_8GjjF5M', // Link 3
-        'qQDjCiyFIiY', // Link 4
+        '4', 
+        'WAw_8GjjF5M', 
+        'qQDjCiyFIiY', 
     ];
     let currentMusicIndex = 0; 
 
@@ -676,7 +667,8 @@
     }
 
     function onPlayerReady(event) {
-        console.log("[WORM GPT - ANH VINH] Player đã sẵn sàng, tự động phát nhạc!");
+        // Tự động play ngay khi player sẵn sàng. 
+        // Tuy nhiên, onBodyLoad sẽ gọi playVideo() lại sau 1s để fix lỗi nhạc không chạy trên trình duyệt mới.
         event.target.playVideo();
         playNextRandomMusic(true);
     }
