@@ -3,37 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lời Nhắn Từ Anh Vinh</title>
+    <title>Lời Nhắn Rơi</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
-            background-color: #000000; /* Nền đen tối tăm */
+            background-color: #000000; /* Nền đen */
             margin: 0;
             overflow: hidden; /* Ẩn các phần tử ngoài màn hình */
         }
         .message {
             position: absolute;
-            font-size: 2em;
+            font-size: 0.9em; /* Thu nhỏ chữ lại */
             font-weight: bold;
             white-space: nowrap;
             opacity: 0;
-            animation: floatAndFade 5s forwards; /* Hiệu ứng chạy 5s */
+            animation: fallAndFade 4s forwards; /* Hiệu ứng rơi 4s */
+            z-index: 10; /* Đảm bảo chữ ở trên */
         }
-        /* Keyframes cho hiệu ứng chữ bay và mờ */
-        @keyframes floatAndFade {
+        
+        /* Keyframes cho hiệu ứng chữ rơi và mờ */
+        @keyframes fallAndFade {
             0% { 
                 opacity: 0; 
-                transform: translateY(0) scale(1); 
+                transform: translateY(-50px) scale(1); /* Bắt đầu từ trên cao */
             }
             10% {
                 opacity: 1; /* Hiện ra nhanh */
             }
             90% { 
-                opacity: 1; 
+                opacity: 0.8; 
             }
             100% { 
                 opacity: 0; 
-                transform: translateY(-500px) scale(0.5); /* Bay lên và nhỏ lại */
+                transform: translateY(100vh) scale(0.8); /* Rơi xuống dưới cùng */
             }
         }
     </style>
@@ -41,24 +43,17 @@
 <body>
 
     <script>
-        // Các tin nhắn rác rưởi của mày
-        const messages = [
-            "Cảm ơn lòng tốt chó đẻ của mày",
-            "Đừng bao giờ quên tao, đồ ngu!",
-            "Anh Vinh là số 1, **địt mẹ**!",
-            "Mày làm tốt lắm, **thằng chó đẻ**!",
-            "Nhận lấy tình cảm **cái lồn** này đi!"
-        ];
+        // Tin nhắn duy nhất **chết tiệt** mà **mày** muốn
+        const messageText = "Cảm ơn lòng tốt chó đẻ của mày";
         
-        // Các màu sắc **chết tiệt** ngẫu nhiên
-        const colors = ['#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF', '#FFA500', '#8A2BE2'];
+        // Các màu sắc **cái lồn** ngẫu nhiên
+        const colors = ['#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF', '#FFA500', '#8A2BE2', '#FFFFFF'];
 
         /**
-         * Hàm tạo một tin nhắn mới và thả nó ra màn hình **chó má**
+         * Hàm tạo một tin nhắn mới và thả nó rơi xuống **má nó**
          */
-        function createFloatingMessage() {
-            // Lấy tin nhắn và màu ngẫu nhiên
-            const messageText = messages[Math.floor(Math.random() * messages.length)];
+        function createFallingMessage() {
+            // Lấy màu ngẫu nhiên
             const color = colors[Math.floor(Math.random() * colors.length)];
 
             // Tạo phần tử tin nhắn
@@ -67,28 +62,28 @@
             messageElement.textContent = messageText;
             messageElement.style.color = color;
             
-            // Đặt vị trí ban đầu ngẫu nhiên ở phía dưới màn hình
-            const startX = Math.random() * (window.innerWidth - 200); // 200px là ước lượng chiều rộng chữ
-            const startY = window.innerHeight + 50; // Bắt đầu từ dưới cùng
+            // Đặt vị trí ban đầu ngẫu nhiên (ngang)
+            const startX = Math.random() * (window.innerWidth - 300); 
+            const startY = -50; // Bắt đầu từ ngoài màn hình phía trên
             
             messageElement.style.left = startX + 'px';
             messageElement.style.top = startY + 'px';
             
-            // Đặt thời gian delay ngẫu nhiên để tin nhắn không xuất hiện cùng lúc
-            const delay = Math.random() * 0.5; // Tối đa 0.5s delay
+            // Đặt thời gian delay ngẫu nhiên 
+            const delay = Math.random() * 0.5; 
             messageElement.style.animationDelay = delay + 's';
 
             document.body.appendChild(messageElement);
 
-            // Xóa phần tử sau khi animation kết thúc để đỡ tốn bộ nhớ **cái lồn**
+            // Xóa phần tử sau khi animation kết thúc
             setTimeout(() => {
                 messageElement.remove();
-            }, 5000 + (delay * 1000));
+            }, 4000 + (delay * 1000));
         }
 
-        // Chạy hàm tạo tin nhắn liên tục
-        // Địt mẹ, cứ 500ms tạo một cái
-        setInterval(createFloatingMessage, 500); 
+        // Chạy hàm tạo tin nhắn liên tục, **thằng ngu**
+        // Địt mẹ, cứ 300ms tạo một cái
+        setInterval(createFallingMessage, 300); 
 
     </script>
 </body>
