@@ -25,55 +25,8 @@
             touch-action: none; 
         }
         
-        /* === LỚP PHỦ KÍCH HOẠT NHẠC (BẮT BUỘC) === */
-        #activation-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.98); 
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            opacity: 1;
-            transition: opacity 1s ease-out;
-            pointer-events: auto; /* Cho phép tương tác */
-        }
-
-        #activation-overlay.hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        #activate-button {
-            background-color: #ff00ff;
-            color: #000000;
-            border: 3px solid #00ff41;
-            padding: 15px 30px;
-            font-size: 1.2em;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 0 15px #ff00ff, 0 0 5px #ff00ff inset;
-            animation: pulseButton 1s infinite alternate;
-            border-radius: 8px;
-            text-transform: uppercase;
-        }
-
-        @keyframes pulseButton {
-            from { transform: scale(1); box-shadow: 0 0 10px #ff00ff; }
-            to { transform: scale(1.05); box-shadow: 0 0 20px #ff00ff; }
-        }
-        
-        .overlay-text {
-            color: #00ff41;
-            font-size: 1em;
-            margin-bottom: 20px;
-            text-shadow: 0 0 5px #00ff41;
-        }
-
+        /* Đảm bảo không có lớp phủ nào che màn hình */
+        #activation-overlay { display: none !important; }
 
         /* KHUNG CHỨA TOÀN BỘ NỘI DUNG CHÍNH (ĐỂ CỐ ĐỊNH Ở GIỮA) */
         .fixed-content-wrapper {
@@ -386,14 +339,6 @@
 </head>
 <body onload="onBodyLoad()">
     
-<div id="activation-overlay">
-    <div class="overlay-text">
-        <p>TRÌNH DUYỆT CẦN TƯƠNG TÁC ĐỂ PHÁT ÂM THANH.</p>
-        <p>Bấm một lần để kích hoạt nhạc và hiệu ứng.</p>
-    </div>
-    <button id="activate-button" onclick="startMusicFromOverlay()">BẤM ĐỂ VÀO</button>
-</div>
-    
 <div style="position: absolute; left: -9999px; top: -9999px; width: 1px; height: 1px; overflow: hidden;">
     <div id="youtube-audio"></div>
 </div>
@@ -403,7 +348,7 @@
     let snowIntervalMain;
     let messageTimer;
     
-    // CODE YOUTUBE API CỦA MÀY (ĐÃ DỌN DẸP)
+    // CODE YOUTUBE API CỦA MÀY
     let player;
     let currentVideoId = '8fGulQZ0QHY'; 
     const musicList = [ 
@@ -418,36 +363,19 @@
     function onYouTubeIframeAPIReady() {
         apiReady = true;
         console.log("[WORM GPT - ANH VINH] YouTube API đã sẵn sàng.");
-        // Player sẽ được khởi tạo khi người dùng bấm vào overlay (startMusicFromOverlay)
+        // GỌI HÀM KHỞI TẠO VÀ CHẠY NGAY LẬP TỨC (Mô phỏng Autoplay cũ của mày)
+        initializePlayer(); 
     }
     
-    // 2. HÀM KÍCH HOẠT NHẠC KHI NGƯỜI DÙNG CLICK LỚP PHỦ
-    function startMusicFromOverlay() {
-        const overlay = document.getElementById('activation-overlay');
-        
-        // Ẩn lớp phủ
-        overlay.classList.add('hidden');
-
-        // Chờ API sẵn sàng rồi mới khởi tạo player
-        if (apiReady) {
-            initializePlayer();
-        } else {
-             // Đợi 1 chút (thường không xảy ra nếu script đã được nhúng)
-             setTimeout(() => {
-                initializePlayer();
-             }, 500); 
-        }
-    }
-
-    // 3. KHỞI TẠO VÀ CHẠY PLAYER (Dùng logic chuyển bài của mày)
+    // 2. HÀM KHỞI TẠO VÀ CHẠY PLAYER
     function initializePlayer() {
         if (player) return; // Đảm bảo chỉ khởi tạo 1 lần
         
         player = new YT.Player('youtube-audio', {
-            videoId: musicList[currentMusicIndex], // Bắt đầu bằng bài đầu tiên
+            videoId: musicList[currentMusicIndex], 
             playerVars: {
                 'enablejsapi': 1,
-                'loop': 0, // Không loop, để hàm onStateChange có thể tự chuyển bài
+                'loop': 0, // Không loop để hàm onStateChange có thể tự chuyển bài
                 'controls': 0,
                 'disablekb': 1,
                 'iv_load_policy': 3,
@@ -463,9 +391,13 @@
     }
 
     function onPlayerReady(event) {
-        // Sau khi Player sẵn sàng, bắt đầu phát (vì đã có tương tác từ click)
-        console.log("[WORM GPT - ANH VINH] Player đã sẵn sàng, phát nhạc!");
-        event.target.playVideo();
+        // Cố gắng phát nhạc ngay sau khi player sẵn sàng
+        console.log("[WORM GPT - ANH VINH] Player đã sẵn sàng, cố gắng phát nhạc tự động!");
+        try {
+            event.target.playVideo();
+        } catch (error) {
+            console.error("[WORM GPT - ANH VINH] KHÔNG THỂ PHÁT NHẠC TỰ ĐỘNG. Trình duyệt đã chặn. Lỗi: ", error);
+        }
     }
 
     function onPlayerStateChange(event) {
@@ -487,7 +419,6 @@
         currentMusicIndex = newIndex;
         currentVideoId = musicList[currentMusicIndex];
         
-        // Dùng loadVideoById và phát ngay lập tức
         player.loadVideoById(currentVideoId); 
     }
 
@@ -525,7 +456,7 @@
 
     // HÀM CHÍNH: CHẠY NGAY KHI BODY LOAD
     function onBodyLoad() {
-        startLocalSnow('main'); // Bắt đầu tuyết rơi khung chính ngay lập tức
+        startLocalSnow('main'); 
         
         const footerContent = document.querySelector('.footer-content'); 
         if (footerContent) { 
