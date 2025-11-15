@@ -342,15 +342,39 @@
             }
         }
 
+        /* LỚP PHỦ KÍCH HOẠT NHẠC */
+        #activation-overlay {
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100vh; 
+            background-color: rgba(0, 0, 0, 0.95); 
+            z-index: 100; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            cursor: pointer;
+        }
+        #activation-overlay h1 {
+            color: #ff00ff; 
+            font-size: 1.5em; 
+            text-shadow: 0 0 10px #ff00ff; 
+            animation: pulsePink 1s infinite alternate;
+        }
+
     </style>
 </head>
 <body onload="onBodyLoad()">
     
+<div id="activation-overlay">
+    <h1>[BẤM VÀO ĐỂ VÀO WEB VÀ CHẠY NHẠC]</h1>
+</div>
+
 <div style="position: absolute; left: -9999px; top: -9999px; width: 1px; height: 1px; overflow: hidden;">
     <iframe id="youtube-audio"
         width="1" height="1" 
-        src="https://www.youtube.com/embed/8fGulQZ0QHY?enablejsapi=1&loop=1&playlist=8fGulQZ0QHY,WAw_8GjjF5M,qQDjCiyFIiY&controls=0&disablekb:1&iv_load_policy:3&modestbranding:1&rel:0&autoplay:1" 
-        frameborder="0" 
+        src="https://youtu.be/jasFoHLNnMA?si=e3SdRAZIFKlu72Pk" frameborder="0" 
         allow="autoplay; encrypted-media" 
         allowfullscreen>
     </iframe>
@@ -391,9 +415,14 @@
         clearTimeout(messageTimer); // Đảm bảo timer bị hủy
     }
 
-    // Hàm này sẽ được gọi thay cho closePopup khi không có popup
-    function onBodyLoad() {
-        startLocalSnow('main'); // Bắt đầu tuyết rơi khung chính ngay lập tức
+    // *** HÀM MỚI: KÍCH HOẠT WEB SAU KHI CLICK ***
+    function activateWeb() {
+        const overlay = document.getElementById('activation-overlay');
+        if (overlay) {
+            overlay.style.display = 'none'; // Ẩn lớp phủ
+        }
+
+        startLocalSnow('main'); // Bắt đầu tuyết rơi khung chính
         
         // Kích hoạt animation footer bay vòng 
         const footerContent = document.querySelector('.footer-content'); 
@@ -405,13 +434,27 @@
             // CHẠY NHẠC SAU KHI HOẠT ẢNH QUAY HOÀN TẤT (1 GIÂY)
             setTimeout(() => {
                 footerContent.classList.remove('fly-around');
-                // Kích hoạt nhạc sau khi hoạt ảnh quay xong
-                if (typeof YT !== 'undefined' && player && player.getPlayerState() !== YT.PlayerState.PLAYING) {
+                // Kích hoạt nhạc sau khi hoạt ảnh quay xong (vì đã có tương tác nên sẽ chạy)
+                if (typeof YT !== 'undefined' && player) {
                     player.playVideo();
                     console.log("[WORM GPT - ANH VINH] Nhạc đã được kích hoạt sau khi hoạt ảnh quay xong!");
                 }
             }, 1000); // 1000ms = 1 giây (độ dài của animation flyAround)
         }
+    }
+    
+    // Gán hàm activateWeb() cho sự kiện click vào lớp phủ
+    window.addEventListener('load', () => {
+        const overlay = document.getElementById('activation-overlay');
+        if (overlay) {
+            // Sử dụng { once: true } để chỉ chạy một lần
+            overlay.addEventListener('click', activateWeb, { once: true });
+        }
+    });
+
+    // Hàm onBodyLoad() cũ không còn cần thiết, chỉ cần giữ lại logic cho sự kiện load web
+    function onBodyLoad() {
+        // Logic đã chuyển sang activateWeb() và gán vào sự kiện click của overlay
     }
 </script>
 
@@ -635,9 +678,9 @@
         }
     });
     
-    // CODE YOUTUBE API (ĐÃ CHẮC CHẮN LÀ ID VIDEO '4' VÀ CHẠY SAU KHI ANIMATION KẾT THÚC)
+    // CODE YOUTUBE API 
     let player;
-    let currentVideoId = '4'; // ĐÃ CHẮC CHẮN LÀ '4'
+    let currentVideoId = '4'; // ID CẦN THIẾT CHO API
     const musicList = [ 
         '4', 
         'WAw_8GjjF5M', 
@@ -668,7 +711,7 @@
 
     function onPlayerReady(event) {
         // Tự động play ngay khi player sẵn sàng. 
-        // Tuy nhiên, onBodyLoad sẽ gọi playVideo() lại sau 1s để fix lỗi nhạc không chạy trên trình duyệt mới.
+        // Tuy nhiên, activateWeb() sẽ gọi playVideo() lại sau 1s (khi người dùng click) để đảm bảo chạy trên mọi trình duyệt.
         event.target.playVideo();
         playNextRandomMusic(true);
     }
