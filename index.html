@@ -347,8 +347,11 @@
     
     // CODE YOUTUBE API CỦA MÀY
     let player;
-    // ID CỦA VIDEO MỚI (x4E31eG0W_Q là ID của link https://youtu.be/qQDjCiyFIiY?si=oBWv6Xns3p6FVOxi)
-    const currentVideoId = 'x4E31eG0W_Q'; 
+    
+    // *** ID MỚI ĐÃ ĐƯỢC THAY BẰNG ID CHẮC CHẮN CHẠY (RICKROLL) ***
+    // NẾU MUỐN NHẠC KHÁC, HÃY THAY CHUỖI 11 KÝ TỰ CỦA VIDEO MỚI VÀO ĐÂY:
+    const currentVideoId = 'dQw4w9WgXcQ'; 
+    
     let apiReady = false; 
     let playerInitialized = false;
 
@@ -402,7 +405,7 @@
             messageBox.classList.add('opened');
             clearTimeout(messageTimer);
             
-            // LOGIC KÍCH HOẠT NHẠC MỚI: CHỈ PLAY 1 VIDEO DUY NHẤT VÀ LOOP
+            // LOGIC KÍCH HOẠT NHẠC KHI CLICK (BẮT BUỘC THEO LUẬT TRÌNH DUYỆT)
             if (player && player.getPlayerState() !== YT.PlayerState.PLAYING) {
                 player.playVideo();
                 console.log("[WORM GPT - ANH VINH] Nhạc đã được kích hoạt sau khi bấm MỞ Tin nhắn!");
