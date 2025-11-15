@@ -25,8 +25,55 @@
             touch-action: none; 
         }
         
-        /* CÁC LỚP PHỦ KHÔNG CẦN THIẾT ĐÃ BỊ LOẠI BỎ */
-        #activation-overlay { display: none !important; }
+        /* === LỚP PHỦ KÍCH HOẠT NHẠC (BẮT BUỘC) === */
+        #activation-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.98); 
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 1;
+            transition: opacity 1s ease-out;
+            pointer-events: auto; /* Cho phép tương tác */
+        }
+
+        #activation-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #activate-button {
+            background-color: #ff00ff;
+            color: #000000;
+            border: 3px solid #00ff41;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 0 15px #ff00ff, 0 0 5px #ff00ff inset;
+            animation: pulseButton 1s infinite alternate;
+            border-radius: 8px;
+            text-transform: uppercase;
+        }
+
+        @keyframes pulseButton {
+            from { transform: scale(1); box-shadow: 0 0 10px #ff00ff; }
+            to { transform: scale(1.05); box-shadow: 0 0 20px #ff00ff; }
+        }
+        
+        .overlay-text {
+            color: #00ff41;
+            font-size: 1em;
+            margin-bottom: 20px;
+            text-shadow: 0 0 5px #00ff41;
+        }
+
 
         /* KHUNG CHỨA TOÀN BỘ NỘI DUNG CHÍNH (ĐỂ CỐ ĐỊNH Ở GIỮA) */
         .fixed-content-wrapper {
@@ -224,7 +271,7 @@
         }
 
 
-        /* TUYẾT RƠI: CONTAINER GIỚI HẠN HIỆU ỨNG (CHO KHUNG CHÍNH) */
+        /* TUYẾT RƠI: CONTAINER GIỚI HẠT HIỆU ỨNG (CHO KHUNG CHÍNH) */
         #local-snow-container {
             position: absolute;
             top: 0;
@@ -339,12 +386,16 @@
 </head>
 <body onload="onBodyLoad()">
     
+<div id="activation-overlay">
+    <div class="overlay-text">
+        <p>TRÌNH DUYỆT CẦN TƯƠNG TÁC ĐỂ PHÁT ÂM THANH.</p>
+        <p>Bấm một lần để kích hoạt nhạc và hiệu ứng.</p>
+    </div>
+    <button id="activate-button" onclick="startMusicFromOverlay()">BẤM ĐỂ VÀO</button>
+</div>
+    
 <div style="position: absolute; left: -9999px; top: -9999px; width: 1px; height: 1px; overflow: hidden;">
-    <iframe width="0" height="0" 
-        src="http://googleusercontent.com/youtube.com/embed/4?autoplay=1&loop=1&playlist=4&controls=0" 
-        frameborder="0" 
-        allowfullscreen>
-    </iframe>
+    <div id="youtube-audio"></div>
 </div>
 
 <script>
@@ -352,23 +403,114 @@
     let snowIntervalMain;
     let messageTimer;
     
-    // Hàm xử lý việc Mở/Đóng Tin nhắn Bí mật
+    // CODE YOUTUBE API CỦA MÀY (ĐÃ DỌN DẸP)
+    let player;
+    let currentVideoId = '8fGulQZ0QHY'; 
+    const musicList = [ 
+        '8fGulQZ0QHY', 
+        'WAw_8GjjF5M', 
+        'qQDjCiyFIiY', 
+    ];
+    let currentMusicIndex = 0; 
+    let apiReady = false; 
+
+    // 1. HÀM SẼ ĐƯỢC GỌI KHI YOUTUBE API TẢI XONG
+    function onYouTubeIframeAPIReady() {
+        apiReady = true;
+        console.log("[WORM GPT - ANH VINH] YouTube API đã sẵn sàng.");
+        // Player sẽ được khởi tạo khi người dùng bấm vào overlay (startMusicFromOverlay)
+    }
+    
+    // 2. HÀM KÍCH HOẠT NHẠC KHI NGƯỜI DÙNG CLICK LỚP PHỦ
+    function startMusicFromOverlay() {
+        const overlay = document.getElementById('activation-overlay');
+        
+        // Ẩn lớp phủ
+        overlay.classList.add('hidden');
+
+        // Chờ API sẵn sàng rồi mới khởi tạo player
+        if (apiReady) {
+            initializePlayer();
+        } else {
+             // Đợi 1 chút (thường không xảy ra nếu script đã được nhúng)
+             setTimeout(() => {
+                initializePlayer();
+             }, 500); 
+        }
+    }
+
+    // 3. KHỞI TẠO VÀ CHẠY PLAYER (Dùng logic chuyển bài của mày)
+    function initializePlayer() {
+        if (player) return; // Đảm bảo chỉ khởi tạo 1 lần
+        
+        player = new YT.Player('youtube-audio', {
+            videoId: musicList[currentMusicIndex], // Bắt đầu bằng bài đầu tiên
+            playerVars: {
+                'enablejsapi': 1,
+                'loop': 0, // Không loop, để hàm onStateChange có thể tự chuyển bài
+                'controls': 0,
+                'disablekb': 1,
+                'iv_load_policy': 3,
+                'modestbranding': 1,
+                'rel': 0,
+                'autoplay': 1 
+            },
+            events: {
+                'onReady': onPlayerReady,
+                'onStateChange': onPlayerStateChange
+            }
+        });
+    }
+
+    function onPlayerReady(event) {
+        // Sau khi Player sẵn sàng, bắt đầu phát (vì đã có tương tác từ click)
+        console.log("[WORM GPT - ANH VINH] Player đã sẵn sàng, phát nhạc!");
+        event.target.playVideo();
+    }
+
+    function onPlayerStateChange(event) {
+        // Tự động chuyển bài khi bài hiện tại kết thúc
+        if (event.data === YT.PlayerState.ENDED) {
+            playNextRandomMusic(); 
+        }
+    }
+
+    // HÀM CHUYỂN BÀI NGẪU NHIÊN CỦA MÀY
+    function playNextRandomMusic() {
+        if (musicList.length === 0) return;
+
+        let newIndex;
+        do {
+            newIndex = Math.floor(Math.random() * musicList.length);
+        } while (newIndex === currentMusicIndex); 
+
+        currentMusicIndex = newIndex;
+        currentVideoId = musicList[currentMusicIndex];
+        
+        // Dùng loadVideoById và phát ngay lập tức
+        player.loadVideoById(currentVideoId); 
+    }
+
+
+    // Tải YouTube API Script
+    const tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    const firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+
+    // HÀM XỬ LÝ VIỆC Mở/Đóng Tin nhắn Bí mật
     function openMessage() {
         const messageBox = document.getElementById('secret-message-box');
         
-        // Mở hộp thư
         if (!messageBox.classList.contains('opened')) {
             messageBox.classList.add('opened');
-            
-            // Xóa timer cũ nếu có
             clearTimeout(messageTimer);
             
-            // Thiết lập timer để tự đóng sau 10 giây
             messageTimer = setTimeout(() => {
                 closeMessage();
             }, 10000); 
         } else {
-            // Nếu đã mở và click lại, đóng luôn
             closeMessage();
         }
     }
@@ -378,21 +520,19 @@
         if (messageBox.classList.contains('opened')) {
             messageBox.classList.remove('opened');
         }
-        clearTimeout(messageTimer); // Đảm bảo timer bị hủy
+        clearTimeout(messageTimer); 
     }
 
     // HÀM CHÍNH: CHẠY NGAY KHI BODY LOAD
     function onBodyLoad() {
         startLocalSnow('main'); // Bắt đầu tuyết rơi khung chính ngay lập tức
         
-        // Kích hoạt animation footer bay vòng 
         const footerContent = document.querySelector('.footer-content'); 
         if (footerContent) { 
             footerContent.classList.remove('fly-around');
             void footerContent.offsetWidth; 
             footerContent.classList.add('fly-around'); 
             
-            // Dọn dẹp class bay vòng sau 1 giây
             setTimeout(() => {
                 footerContent.classList.remove('fly-around');
             }, 1000); 
