@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lời Nhắn Hồng Nhạt Lơ Lửng & Né Khung Vĩnh Viễn</title>
+    <title>Lời Nhắn Nhỏ Lơ Lửng & Né Khung Vĩnh Viễn</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -16,15 +16,15 @@
             height: 100vh;
         }
         
-        /* Chữ hiện ngay lập tức và không cần animation xuất hiện */
+        /* Chỉnh chữ NHỎ LẠI và hiện ngay lập tức */
         .message {
             position: absolute;
-            font-size: 1.2em; 
+            font-size: 0.9em; /* CHỮ NHỎ HƠN */
             font-weight: bold;
             white-space: nowrap;
             opacity: 1; 
             z-index: 10; 
-            color: #ffffff; /* Màu chữ mặc định (vẫn được đổi màu bằng shadow) */
+            color: #FFC0CB; /* Màu hồng nhạt */
             
             /* Animation LẮC LƯ NHANH VÀ VĨNH VIỄN */
             animation: 
@@ -33,11 +33,6 @@
             -webkit-animation: 
                 hoverBubble 4s infinite alternate ease-in-out, 
                 blinkSevenColors 0.15s infinite step-end;
-        }
-
-        /* ĐỔI MÀU CHỮ LƠ LỬNG SANG HỒNG NHẠT */
-        .message {
-            color: #FFC0CB; /* Màu chữ hồng nhạt */
         }
         
         /* Keyframes BONG BÓNG LẮC LƯ NHANH */
@@ -51,7 +46,6 @@
         }
         
         /* Keyframes ĐỔI MÀU CỰC NHANH (0.15s) */
-        /* Giữ nguyên màu shadow để hiệu ứng nhấp nháy 7 màu vẫn có */
         @keyframes blinkSevenColors {
             0%, 14% { text-shadow: 0 0 7px #FF0000, 0 0 10px rgba(255, 0, 0, 0.5); }
             15%, 28% { text-shadow: 0 0 7px #FFA500, 0 0 10px rgba(255, 165, 0, 0.5); }
@@ -93,7 +87,7 @@
         }
 
         #main-sticker {
-            width: 250px; /* KHUNG THON LẠI */
+            width: 250px; /* KHUNG VẪN THON */
             height: auto; border-radius: 15px; 
             box-shadow: 0 0 20px rgba(255, 0, 85, 0.7); 
             animation: pulseSticker 2s infinite alternate; 
@@ -115,16 +109,15 @@
         const messages = [
             "Cảm ơn lòng tốt chó đẻ của mày",
             "địt mẹ cảm ơn nha",
-            "Ngáo lồn nx",
             "🖕🏻", 
             "🖕🏻🖕🏻", 
             "🖕🏻🖕🏻🖕🏻",
-        ];
+        ]; // ĐÃ BỎ "Ngáo lồn nx"
 
         // KHUNG THON LẠI
         const STICKER_WIDTH = 250; 
-        const STICKER_HEIGHT = 350; // Ước tính chiều cao
-        const MESSAGE_COUNT = 15; // GIẢM SỐ LƯỢNG CHỮ
+        const STICKER_HEIGHT = 350; 
+        const MESSAGE_COUNT = 10; // GIẢM CHỮ XUỐNG 10 CÁI
 
         function getRandomPosition(element, viewportWidth, viewportHeight) {
             const elementWidth = element.offsetWidth;
@@ -134,8 +127,9 @@
             const centerY = viewportHeight / 2;
             
             // Khu vực cấm (quanh sticker)
-            const banRadiusX = STICKER_WIDTH / 2 + 50; 
-            const banRadiusY = STICKER_HEIGHT / 2 + 50;
+            // Giảm đệm từ 50px xuống 20px để chữ nhỏ có thể lơ lửng gần hơn
+            const banRadiusX = STICKER_WIDTH / 2 + 20; 
+            const banRadiusY = STICKER_HEIGHT / 2 + 20;
             
             let x, y;
             let tries = 0;
@@ -149,6 +143,7 @@
                 const distanceX = Math.abs(x + elementWidth / 2 - centerX);
                 const distanceY = Math.abs(y + elementHeight / 2 - centerY);
                 
+                // Nếu vượt quá giới hạn (NÉ KHUNG)
                 if (distanceX > banRadiusX || distanceY > banRadiusY || tries > 100) {
                     break; 
                 }
@@ -194,7 +189,7 @@
         }
 
         window.onload = initializeMessages;
-        // Bỏ setInterval để không hiện chữ từng cái một
+        // Bỏ setInterval để chỉ xếp sẵn chữ khi load web
 
     </script>
 </body>
