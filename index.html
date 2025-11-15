@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lời Nhắn Lơ Lửng Bong Bóng & Rơi Chậm</title>
+    <title>Lời Nhắn Lơ Lửng Toàn Màn Hình Vĩnh Viễn</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
             background-color: #000000;
             margin: 0;
-            overflow: hidden; 
+            overflow: hidden; /* Quan trọng để chữ không bị cuộn */
             display: flex; 
             justify-content: center;
             align-items: center;
@@ -25,31 +25,18 @@
             z-index: 10; 
             color: #ffffff; 
             
-            /* Mặc định cho chữ rơi (RƠI CHẬM HƠN: 10s) */
+            /* Animation LƠ LỬNG VĨNH VIỄN */
             animation: 
-                fallAndFade 10s forwards, 
-                blinkSevenColors 0.15s infinite step-end; 
-            -webkit-animation: 
-                fallAndFade 10s forwards, 
-                blinkSevenColors 0.15s infinite step-end;
-        }
-
-        /* CHỮ LƠ LỬNG - CHUYỂN ĐỘNG NHƯ BONG BÓNG */
-        .message.floating {
-            /* Chỉ xuất hiện và lắc lư mãi mãi */
-            animation: 
-                floatingAppear 2s forwards, /* Xuất hiện */
-                hoverBubble 8s infinite alternate ease-in-out, /* Lắc lư vĩnh viễn */
+                floatingAppear 2s forwards, /* Xuất hiện ban đầu */
+                hoverBubble 4s infinite alternate ease-in-out, /* Lắc lư CỰC NHANH: 4s */
                 blinkSevenColors 0.15s infinite step-end; 
             -webkit-animation: 
                 floatingAppear 2s forwards, 
-                hoverBubble 8s infinite alternate ease-in-out, 
+                hoverBubble 4s infinite alternate ease-in-out, 
                 blinkSevenColors 0.15s infinite step-end;
-            opacity: 0;
-            transform: none; 
         }
 
-        /* Keyframes cho chữ LƠ LỬNG (Xuất hiện và giữ) */
+        /* Keyframes cho chữ LƠ LỬNG (Xuất hiện và giữ VĨNH VIỄN) */
         @keyframes floatingAppear {
             0% { opacity: 0; transform: scale(0.8); }
             100% { opacity: 1; transform: scale(1); } /* Giữ opacity và scale */
@@ -59,30 +46,16 @@
             100% { opacity: 1; -webkit-transform: scale(1); }
         }
 
-        /* Keyframes BONG BÓNG LẮC LƯ */
+        /* Keyframes BONG BÓNG LẮC LƯ NHANH */
         @keyframes hoverBubble {
             from { transform: translateY(0px) rotate(1deg); }
-            to { transform: translateY(-20px) rotate(-1deg); }
+            to { transform: translateY(-30px) rotate(-1deg); } /* Lắc lư mạnh hơn */
         }
         @-webkit-keyframes hoverBubble {
             from { -webkit-transform: translateY(0px) rotate(1deg); }
-            to { -webkit-transform: translateY(-20px) rotate(-1deg); }
+            to { -webkit-transform: translateY(-30px) rotate(-1deg); }
         }
         
-        /* Keyframes RƠI XUỐNG ĐÍT VÀ BIẾN MẤT TẠI CHỖ */
-        @keyframes fallAndFade {
-            0% { opacity: 0; transform: translateY(-50px) scale(1); }
-            5% { opacity: 0.9; }
-            99% { opacity: 0.9; transform: translateY(100vh) scale(1); } 
-            100% { opacity: 0; transform: translateY(100vh) scale(0); } /* Biến mất NGAY TẠI ĐÂY */
-        }
-        @-webkit-keyframes fallAndFade {
-            0% { opacity: 0; -webkit-transform: translateY(-50px) scale(1); }
-            5% { opacity: 0.9; }
-            99% { opacity: 0.9; -webkit-transform: translateY(100vh) scale(1); }
-            100% { opacity: 0; -webkit-transform: translateY(100vh) scale(0); }
-        }
-
         /* Keyframes ĐỔI MÀU NHANH (0.15s) */
         @keyframes blinkSevenColors {
             0%, 14% { text-shadow: 0 0 7px #FF0000, 0 0 10px rgba(255, 0, 0, 0.5); }
@@ -107,11 +80,6 @@
         .message.icon {
             text-shadow: 0 0 10px rgba(255, 255, 0, 0.8), 0 0 20px rgba(255, 165, 0, 0.5); 
             color: inherit; 
-        }
-        .message.icon.floating {
-            /* Giữ nguyên pulseIcon và thêm hoverBubble */
-            animation: floatingAppear 2s forwards, hoverBubble 8s infinite alternate ease-in-out, pulseIcon 1s infinite alternate; 
-            -webkit-animation: floatingAppear 2s forwards, hoverBubble 8s infinite alternate ease-in-out, pulseIcon 1s infinite alternate;
         }
 
         @keyframes pulseIcon {
@@ -157,29 +125,14 @@
             messageElement.classList.add('message');
             messageElement.textContent = text;
             
-            const isFloating = Math.random() < 0.5; 
-
-            if (isFloating) {
-                messageElement.classList.add('floating');
-                // Vị trí NGẪU NHIÊN toàn màn hình cho chữ lơ lửng
-                messageElement.style.left = Math.random() * (window.innerWidth - 150) + 'px';
-                messageElement.style.top = Math.random() * (window.innerHeight - 100) + 'px';
-                
-                // CHỮ LƠ LỬNG TỒN TẠI VĨNH VIỄN (Không dùng setTimeout)
-                
-            } else {
-                // Chữ rơi
-                const startX = Math.random() * (window.innerWidth - 150); 
-                messageElement.style.left = startX + 'px';
-                messageElement.style.top = '-50px'; 
-                const delay = Math.random() * 0.5; 
-                messageElement.style.animationDelay = delay + 's';
-
-                // Chữ rơi biến mất sau 10s (thời gian animation) + delay
-                setTimeout(() => {
-                    messageElement.remove();
-                }, 10000 + (delay * 1000)); 
-            }
+            // TẤT CẢ ĐỀU LÀ CHỮ LƠ LỬNG
+            
+            // Vị trí NGẪU NHIÊN toàn màn hình 
+            messageElement.style.left = Math.random() * (window.innerWidth - 150) + 'px';
+            messageElement.style.top = Math.random() * (window.innerHeight - 100) + 'px';
+            
+            // Random delay cho chuyển động bong bóng để chúng không đồng bộ
+            messageElement.style.animationDelay = (Math.random() * 2) + 's';
 
             if (text.includes('🖕🏻')) {
                 messageElement.classList.add('icon');
@@ -188,8 +141,8 @@
             document.body.appendChild(messageElement);
         }
 
-        // Giảm tần suất tạo chữ tổng thể để không bị dính cục
-        setInterval(createMessage, 150); /* Tạo tin nhắn mỗi 150ms */
+        // Tần suất tạo chữ tổng thể (tăng nhẹ so với trước để màn hình đầy hơn)
+        setInterval(createMessage, 100); 
 
     </script>
 </body>
