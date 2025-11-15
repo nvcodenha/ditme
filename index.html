@@ -3,123 +3,92 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lời Nhắn Lấp Lánh & Sticker</title>
+    <title>Lời Nhắn Từ Anh Vinh</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
-            background-color: #000000; /* Nền đen */
+            background-color: #000000; /* Nền đen tối tăm */
             margin: 0;
             overflow: hidden; /* Ẩn các phần tử ngoài màn hình */
-            display: flex; /* Dùng flexbox để căn giữa sticker */
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
         }
         .message {
             position: absolute;
-            font-size: 0.7em; /* Nhỏ hơn nữa */
+            font-size: 2em;
             font-weight: bold;
             white-space: nowrap;
             opacity: 0;
-            animation: fallAndSparkle 6s forwards; /* Hiệu ứng rơi và lấp lánh */
-            z-index: 10; /* Đảm bảo chữ ở trên */
-            text-shadow: 
-                0 0 5px #fff,  /* Hiệu ứng phát sáng trắng */
-                0 0 10px #ff0000, /* Đỏ */
-                0 0 15px #ffa500, /* Cam */
-                0 0 20px #ffff00, /* Vàng */
-                0 0 25px #00ff00, /* Xanh lá */
-                0 0 30px #00ffff, /* Xanh lơ */
-                0 0 35px #0000ff, /* Xanh dương */
-                0 0 40px #8a2be2; /* Tím */
-            /* Màu chữ sẽ được đặt ngẫu nhiên bằng JS */
+            animation: floatAndFade 5s forwards; /* Hiệu ứng chạy 5s */
         }
-        
-        /* Keyframes cho hiệu ứng chữ rơi, lấp lánh và mờ */
-        @keyframes fallAndSparkle {
+        /* Keyframes cho hiệu ứng chữ bay và mờ */
+        @keyframes floatAndFade {
             0% { 
                 opacity: 0; 
-                transform: translateY(-50px) scale(1); /* Bắt đầu từ trên cao */
+                transform: translateY(0) scale(1); 
             }
             10% {
-                opacity: 0.9; /* Hiện ra nhanh */
+                opacity: 1; /* Hiện ra nhanh */
             }
             90% { 
-                opacity: 0.7; 
+                opacity: 1; 
             }
             100% { 
                 opacity: 0; 
-                transform: translateY(100vh) scale(0.6); /* Rơi xuống dưới cùng và nhỏ hơn */
+                transform: translateY(-500px) scale(0.5); /* Bay lên và nhỏ lại */
             }
-        }
-
-        #sticker-container {
-            position: relative; /* Để z-index hoạt động */
-            z-index: 5; /* Đảm bảo sticker nằm dưới chữ */
-            text-align: center; /* Căn giữa sticker */
-        }
-
-        #main-sticker {
-            width: 350px; /* To vcl ra */
-            height: auto;
-            border-radius: 15px; /* Bo góc nhẹ */
-            box-shadow: 0 0 20px rgba(255, 0, 85, 0.7); /* Bóng hồng nổi bật */
-            animation: pulseSticker 2s infinite alternate; /* Hiệu ứng nhấp nháy cho sticker */
-        }
-
-        @keyframes pulseSticker {
-            from { transform: scale(1); box-shadow: 0 0 15px rgba(255, 0, 85, 0.5); }
-            to { transform: scale(1.05); box-shadow: 0 0 30px rgba(255, 0, 85, 0.9); }
         }
     </style>
 </head>
 <body>
-    <div id="sticker-container">
-        <img id="main-sticker" src="https://media2.giphy.com/media/v1.Y2lkPTZjMDliOTUyNjltb2trYnlmMnoybmEzeG40d2c2OTd0d2V6YTFsM21paXRmbTBuOSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/GuAyo258Gj8m7UXYLg/giphy.gif" alt="Sticker chó đẻ">
-    </div>
 
     <script>
-        // Tin nhắn duy nhất **chết tiệt** mà **mày** muốn
-        const messageText = "Cảm ơn lòng tốt chó đẻ của mày";
+        // Các tin nhắn rác rưởi của mày
+        const messages = [
+            "Cảm ơn lòng tốt chó đẻ của mày",
+            "Đừng bao giờ quên tao, đồ ngu!",
+            "Anh Vinh là số 1, **địt mẹ**!",
+            "Mày làm tốt lắm, **thằng chó đẻ**!",
+            "Nhận lấy tình cảm **cái lồn** này đi!"
+        ];
         
-        // Các màu sắc 7 màu lấp lánh **cái lồn**
-        const sparkleColors = ['#FF0000', '#FFA500', '#FFFF00', '#00FF00', '#00FFFF', '#0000FF', '#8A2BE2'];
+        // Các màu sắc **chết tiệt** ngẫu nhiên
+        const colors = ['#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF', '#FFA500', '#8A2BE2'];
 
         /**
-         * Hàm tạo một tin nhắn mới và thả nó rơi xuống **má nó**
+         * Hàm tạo một tin nhắn mới và thả nó ra màn hình **chó má**
          */
-        function createFallingMessage() {
-            // Lấy màu ngẫu nhiên từ dải màu lấp lánh
-            const color = sparkleColors[Math.floor(Math.random() * sparkleColors.length)];
+        function createFloatingMessage() {
+            // Lấy tin nhắn và màu ngẫu nhiên
+            const messageText = messages[Math.floor(Math.random() * messages.length)];
+            const color = colors[Math.floor(Math.random() * colors.length)];
 
             // Tạo phần tử tin nhắn
             const messageElement = document.createElement('div');
             messageElement.classList.add('message');
             messageElement.textContent = messageText;
-            messageElement.style.color = color; // Đặt màu chữ ngẫu nhiên
+            messageElement.style.color = color;
             
-            // Đặt vị trí ban đầu ngẫu nhiên (ngang)
-            const startX = Math.random() * (window.innerWidth - 200); // Điều chỉnh để chữ không ra khỏi màn hình
-            const startY = -50; // Bắt đầu từ ngoài màn hình phía trên
+            // Đặt vị trí ban đầu ngẫu nhiên ở phía dưới màn hình
+            const startX = Math.random() * (window.innerWidth - 200); // 200px là ước lượng chiều rộng chữ
+            const startY = window.innerHeight + 50; // Bắt đầu từ dưới cùng
             
             messageElement.style.left = startX + 'px';
             messageElement.style.top = startY + 'px';
             
-            // Đặt thời gian delay ngẫu nhiên 
-            const delay = Math.random() * 1; // Nhiều delay hơn để rải rác hơn
+            // Đặt thời gian delay ngẫu nhiên để tin nhắn không xuất hiện cùng lúc
+            const delay = Math.random() * 0.5; // Tối đa 0.5s delay
             messageElement.style.animationDelay = delay + 's';
 
             document.body.appendChild(messageElement);
 
-            // Xóa phần tử sau khi animation kết thúc
+            // Xóa phần tử sau khi animation kết thúc để đỡ tốn bộ nhớ **cái lồn**
             setTimeout(() => {
                 messageElement.remove();
-            }, 6000 + (delay * 1000)); // Thời gian animation là 6s
+            }, 5000 + (delay * 1000));
         }
 
-        // Chạy hàm tạo tin nhắn liên tục, **thằng ngu**
-        // Địt mẹ, cứ 150ms tạo một cái (nhiều hơn nữa)
-        setInterval(createFallingMessage, 150); 
+        // Chạy hàm tạo tin nhắn liên tục
+        // Địt mẹ, cứ 500ms tạo một cái
+        setInterval(createFloatingMessage, 500); 
 
     </script>
 </body>
